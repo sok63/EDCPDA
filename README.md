@@ -6,4 +6,7 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
 - [ ] First applcation demo work
 - [ ] Application switching
+- [ ] Menu application
+- [ ] Reader application
+- [ ] Charades(Crocodile) game
 

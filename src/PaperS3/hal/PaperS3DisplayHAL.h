@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <pda/hal/ADisplayHAL.h>
 
 class PaperS3DisplayHAL: public ADisplayHAL {

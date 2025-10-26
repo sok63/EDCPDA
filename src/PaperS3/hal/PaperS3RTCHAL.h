@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <pda/hal/ARTCHAL.h>
 
 class PaperS3RTCHAL: public ARTCHAL {

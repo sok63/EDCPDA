@@ -1,23 +1,21 @@
+#pragma once 
+
 #include <cstdint>
 #include <cstddef>
 
+using TimerCallback = void(*)(void* userData);
+
+struct Timer {
+    uint32_t interval;
+    uint32_t lastTrigger;
+    bool repeat;
+    bool active;
+    TimerCallback callback;
+    void* userData;
+};
+
+
 class TimerService {
-public:
-    using TimerCallback = void(*)(void* userData);
-    
-private:
-    struct Timer {
-        uint32_t interval;
-        uint32_t lastTrigger;
-        bool repeat;
-        bool active;
-        TimerCallback callback;
-        void* userData;
-    };
-    
-    static const size_t MAX_TIMERS = 16;
-    Timer timers_[MAX_TIMERS];
-    
 public:
     TimerService();
     
@@ -26,4 +24,8 @@ public:
     void stopTimer(int timerId);
     void deleteTimer(int timerId);
     void update();
+
+private:
+    static const size_t MAX_TIMERS = 16;
+    Timer timers_[MAX_TIMERS];
 };

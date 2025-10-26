@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <cstdint>
 #include <cstddef>
 
@@ -23,6 +25,14 @@ public:
 };
 
 class EventService {
+public:
+    EventService();
+    
+    void addListener(AEventListener* listener);
+    void removeListener(AEventListener* listener);
+    void postEvent(const Event& event);
+    void processEvents();
+    
 private:
     static const size_t MAX_LISTENERS = 10;
     AEventListener* listeners_[MAX_LISTENERS];
@@ -31,12 +41,4 @@ private:
     Event eventQueue_[32];
     size_t queueHead_;
     size_t queueTail_;
-    
-public:
-    EventService();
-    
-    void addListener(AEventListener* listener);
-    void removeListener(AEventListener* listener);
-    void postEvent(const Event& event);
-    void processEvents();
 };

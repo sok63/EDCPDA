@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <pda/hal/ADisplayHAL.h>
 #include <pda/hal/ATouchHAL.h>
 #include <pda/hal/AStorageHAL.h>
@@ -25,12 +27,12 @@ public:
                ARTCHAL* rtc, APowerHAL* power, EventService* eventService,
                ConfigService* configService, TimerService* timerService);
     
-    ADisplayHAL* getDisplay() const { return display_; }
-    ATouchHAL* getTouch() const { return touch_; }
-    AStorageHAL* getStorage() const { return storage_; }
-    ARTCHAL* getRTC() const { return rtc_; }
-    APowerHAL* getPower() const { return power_; }
-    EventService* getEventService() const { return eventService_; }
-    ConfigService* getConfigService() const { return configService_; }
-    TimerService* getTimerService() const { return timerService_; }
+    ADisplayHAL* getDisplay() const;
+    ATouchHAL* getTouch() const;
+    AStorageHAL* getStorage() const;
+    ARTCHAL* getRTC() const; 
+    APowerHAL* getPower() const; 
+    EventService* getEventService() const;
+    ConfigService* getConfigService() const;
+    TimerService* getTimerService() const;
 };

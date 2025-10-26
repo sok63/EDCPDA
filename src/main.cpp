@@ -1,3 +1,4 @@
+#include <M5Unified.h>
 #include <Arduino.h>
 
 #include <PaperS3/hal/PaperS3DisplayHAL.h>
@@ -36,7 +37,7 @@ ApplicationManager appManager(&appRegistry, &appContext);
 
 
 void setup() {
-    //M5.begin();
+    M5.begin();
     
     // Initialize HAL
     displayHal.init();
@@ -58,7 +59,7 @@ void setup() {
 }
 
 void loop() {
-    //M5.update();
+    M5.update();
     
     // Process hardware events
     if (touchHal.available()) {

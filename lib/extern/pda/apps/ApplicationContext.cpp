@@ -3,3 +3,43 @@
 ApplicationContext::ApplicationContext(ADisplayHAL *display, ATouchHAL *touch, AStorageHAL *storage, ARTCHAL *rtc, APowerHAL *power, EventService *eventService, ConfigService *configService, TimerService *timerService)
 {
 }
+
+ADisplayHAL *ApplicationContext::getDisplay() const
+{
+    return display_;
+}
+
+ATouchHAL *ApplicationContext::getTouch() const
+{
+    return touch_;
+}
+
+AStorageHAL *ApplicationContext::getStorage() const
+{
+    return storage_;
+}
+
+ARTCHAL *ApplicationContext::getRTC() const
+{
+    return rtc_;
+}
+
+APowerHAL *ApplicationContext::getPower() const
+{
+    return power_;
+}
+
+EventService *ApplicationContext::getEventService() const
+{
+    return eventService_;
+}
+
+ConfigService *ApplicationContext::getConfigService() const
+{
+    return configService_;
+}
+
+TimerService *ApplicationContext::getTimerService() const
+{
+    return timerService_;
+}

@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <cstdint>
 
 #include <pda/hal/APowerHAL.h>
