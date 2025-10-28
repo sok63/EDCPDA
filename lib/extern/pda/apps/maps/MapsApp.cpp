@@ -56,10 +56,6 @@ void MapsApp::onStop()
 {
 }
 
-void MapsApp::onDestroy()
-{
-}
-
 void MapsApp::update(uint32_t deltaTime)
 {
 }

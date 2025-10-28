@@ -24,10 +24,6 @@ void MenuApp::onStop()
 {
 }
 
-void MenuApp::onDestroy()
-{
-}
-
 void MenuApp::update(uint32_t deltaTime)
 {
 }

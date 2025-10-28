@@ -6,15 +6,6 @@
 #include "hal/PaperS3StorageHAL.h"
 #include "hal/PaperS3TouchHAL.h"
 
-
-// // Define serevices
-
-
-// // Define Application stuff
-// ApplicationContext appContext(&displayHal, &touchHal, &storageHal, &rtcHal, &powerHal, &eventService, &configService, &timerService);
-// ApplicationRegistry appRegistry;
-// ApplicationManager appManager(&appRegistry, &appContext);
-
 void PaperS3::init()
 {
     M5.begin();

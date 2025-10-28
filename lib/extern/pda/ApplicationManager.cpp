@@ -1,6 +1,6 @@
 #include "ApplicationManager.h"
 
-ApplicationManager::ApplicationManager(ApplicationRegistry * registry, ApplicationContext * context)
+ApplicationManager::ApplicationManager(ApplicationRegistry * applicationRegistry, ApplicationContext * applicationContext): applicationContext_(applicationContext), applicationRegistry_(applicationRegistry)
 {
 }
 
@@ -14,6 +14,14 @@ void ApplicationManager::init()
 
 void ApplicationManager::launchApp(size_t appIndex)
 {
+  auto app = applicationRegistry_->getApplication(appIndex);
+  
+  // Stop before start if not stopped
+  if(app->getState() != eApplicationState::STOPPED){
+    app->onStop();
+  }
+
+  app->onStart();
 }
 
 void ApplicationManager::exitCurrentApp()
@@ -33,9 +41,9 @@ void ApplicationManager::render()
 {
 }
 
-ApplicationRegistry *ApplicationManager::getRegistry()
+ApplicationRegistry *ApplicationManager::getApplicationRegistry()
 {
-    return registry_;
+    return applicationRegistry_;
 }
 
 void ApplicationManager::transitionApp()

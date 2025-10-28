@@ -27,11 +27,11 @@ public:
     void update();
     void render();
     
-    ApplicationRegistry* getRegistry();
+    ApplicationRegistry* getApplicationRegistry();
 
 private:
-    ApplicationRegistry* registry_;
-    ApplicationContext* context_;
+    ApplicationRegistry* applicationRegistry_;
+    ApplicationContext* applicationContext_;
     
     AApplication* currentApp_;
     AApplication* nextApp_;

@@ -32,7 +32,7 @@ ApplicationRegistry *ADevice::getApplicationRegistry()
 
 void ADevice::registerApplication(AApplication *application)
 {
-    getApplicationRegistry()->registerApp(application->getName(),application->getDescription(),application);
+    getApplicationRegistry()->registerApp(application);
 }
 
 void ADevice::setDisplayHAL(ADisplayHAL *displayHAL)

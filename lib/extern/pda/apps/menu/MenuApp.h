@@ -12,7 +12,6 @@ public:
     void onResume() override;
     void onPause() override;
     void onStop() override;
-    void onDestroy() override;
     
     void update(uint32_t deltaTime) override;
     void render(ADisplayHAL* display) override;

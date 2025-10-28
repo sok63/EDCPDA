@@ -4,9 +4,12 @@ ApplicationRegistry::ApplicationRegistry()
 {
 }
 
-bool ApplicationRegistry::registerApp(const char *name, const char *description, AApplication *application)
+bool ApplicationRegistry::registerApp(AApplication *application)
 {
-    return false;
+    if(appCount_< LIMIT_MAX_APPS) return false;
+    apps_[appCount_] = application;
+    application->onCreate();
+    return true;
 }
 
 size_t ApplicationRegistry::getAppCount() const
@@ -14,12 +17,9 @@ size_t ApplicationRegistry::getAppCount() const
     return appCount_; 
 }
 
-const AppInfo &ApplicationRegistry::getAppInfo(size_t index) const
+AApplication *ApplicationRegistry::getApplication(size_t index) const
 {
-    return apps_[index]; 
-}
-
-AApplication *ApplicationRegistry::createApp(size_t index, ApplicationContext *context)
-{
-    return nullptr;
+    if(index > appCount_) return nullptr;
+    if(index >= LIMIT_MAX_APPS) return nullptr;
+    return apps_[index];
 }
