@@ -20,6 +20,7 @@ public:
     
     // Update loop
     virtual void update(uint32_t deltaTime) = 0;
+    bool needRedraw();
     virtual void render(ADisplayHAL* display) = 0;
     
     // App info
@@ -32,5 +33,6 @@ public:
     virtual void onEvent(const Event& event) override = 0;
 
 protected:
+    bool needRedraw_ = true;
     eApplicationState state_ = eApplicationState::STOPPED;
 };

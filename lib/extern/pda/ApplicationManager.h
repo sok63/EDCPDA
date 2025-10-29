@@ -33,8 +33,8 @@ private:
     ApplicationRegistry* applicationRegistry_;
     ApplicationContext* applicationContext_;
     
-    AApplication* currentApp_;
-    AApplication* nextApp_;
+    size_t currentApp_ = 0;
+    
     
     AppState currentAppState_;
     

@@ -30,7 +30,8 @@ void ApplicationManager::exitCurrentApp()
 
 bool ApplicationManager::isAppRunning() const
 {
-    return currentApp_ != nullptr;
+    auto app = applicationRegistry_->getApplication(currentApp_);
+    return app->getState() == eApplicationState::RUNNING;
 }
 
 void ApplicationManager::update()
@@ -39,6 +40,14 @@ void ApplicationManager::update()
 
 void ApplicationManager::render()
 {
+  auto app = applicationRegistry_->getApplication(currentApp_);
+  auto display = applicationContext_->getDisplay();
+
+  if(!app->needRedraw()) return;
+ 
+  display->getScreenSprite()->clear();
+  app->render(display);
+  display->refresh();
 }
 
 ApplicationRegistry *ApplicationManager::getApplicationRegistry()

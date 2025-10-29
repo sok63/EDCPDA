@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <PaperS3/PaperS3.h>
 
+#include <PaperS3/PaperS3.h>
 #include <pda/apps/menu/MenuApp.h>
 #include <pda/apps/maps/MapsApp.h>
 

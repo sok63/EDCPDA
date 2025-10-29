@@ -6,15 +6,28 @@
 void PaperS3DisplayHAL::init()
 {
     M5.Display.begin();
-    M5Canvas canvas(&M5.Display);
+
+    canvas_raw_ = new M5Canvas(&M5.Display);
+    canvas_ = new PaperS3DisplaySpriteHAL(canvas_raw_);
 
     // ERRATA: / Fixes the automatic wake display issue
-    canvas.setColorDepth(16);
-    canvas.createSprite(1, 1);  
-    canvas.deleteSprite();  
+    canvas_raw_->setColorDepth(1);
+    canvas_raw_->createSprite(1, 1);  
+    canvas_raw_->deleteSprite(); 
     // ERRATA: end /
 
-    M5.Display.setEpdMode(epd_mode_t::epd_fastest);
+    M5.Display.setRotation(90);
+    
+    canvas_raw_->createSprite(540, 960);
+    canvas_raw_->setColor(TFT_WHITE);
+    canvas_raw_->fillScreen();
+
+   // M5.Display.startWrite();
+   // M5.Display.setEpdMode(epd_mode_t::epd_fastest);
+   // M5.Display.fillScreen(TFT_WHITE);
+   // M5.Display.setTextColor(TFT_BLACK);
+   // M5.Display.setTextSize(2);
+   // M5.Display.setCursor(0, 0);
 }
 
 void PaperS3DisplayHAL::beginTransaction()
@@ -29,16 +42,9 @@ void PaperS3DisplayHAL::endTransaction()
 
 void PaperS3DisplayHAL::refresh()
 {
-    // Prepare screen
-    M5.Display.fillScreen(TFT_WHITE); 
-    M5.Display.setCursor(0, 0);
-
-    // Apply canvas to screen
-    //canvas_.pushSprite(0, 0);
-    //canvas_.deleteSprite();
-
-    // Display changes
+    canvas_raw_->pushSprite(0, 0);
     M5.Display.display();
+    M5.Display.waitDisplay();
 }
 
 uint16_t PaperS3DisplayHAL::width() const
@@ -68,7 +74,7 @@ void PaperS3DisplayHAL::powerOff()
 
 ADisplaySpriteHAL *PaperS3DisplayHAL::getScreenSprite()
 {
-    return nullptr;
+    return canvas_;
 }
 
 ADisplaySpriteHAL *PaperS3DisplayHAL::getNewSprite()

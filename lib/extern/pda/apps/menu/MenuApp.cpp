@@ -30,6 +30,8 @@ void MenuApp::update(uint32_t deltaTime)
 
 void MenuApp::render(ADisplayHAL *display)
 {
+   needRedraw_ = false;
+   display->getScreenSprite()->drawRect(10,10,50,50,1);
 }
 
 const char *MenuApp::getName() const

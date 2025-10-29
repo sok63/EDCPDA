@@ -23,5 +23,6 @@ public:
     void deleteSprite(ADisplaySpriteHAL*) override;
 
 private:
+    M5Canvas* canvas_raw_;
     PaperS3DisplaySpriteHAL* canvas_;
 };

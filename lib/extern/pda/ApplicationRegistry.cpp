@@ -6,8 +6,8 @@ ApplicationRegistry::ApplicationRegistry()
 
 bool ApplicationRegistry::registerApp(AApplication *application)
 {
-    if(appCount_< LIMIT_MAX_APPS) return false;
     apps_[appCount_] = application;
+    appCount_+=1;
     application->onCreate();
     return true;
 }

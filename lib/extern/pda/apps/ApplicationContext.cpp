@@ -1,6 +1,7 @@
 #include "ApplicationContext.h"
 
-ApplicationContext::ApplicationContext(ADisplayHAL *display, ATouchHAL *touch, AStorageHAL *storage, ARTCHAL *rtc, APowerHAL *power, EventService *eventService, ConfigService *configService, TimerService *timerService)
+ApplicationContext::ApplicationContext(ADisplayHAL *display, ATouchHAL *touch, AStorageHAL *storage, ARTCHAL *rtc, APowerHAL *power, EventService *eventService, ConfigService *configService, TimerService *timerService):
+  display_(display), touch_(touch), storage_(storage), rtc_(rtc), power_(power), eventService_(eventService), configService_(configService), timerService_(timerService) 
 {
 }
 
