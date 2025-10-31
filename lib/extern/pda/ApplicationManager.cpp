@@ -53,17 +53,14 @@ void ApplicationManager::render()
   {
     // Render header
     auto hs = display->getHeaderSprite();
-
+    // TODO: Do normal service for header fill with info
+    // At now draw rect with size of full header sprite
     hs->drawRect(0,0,539,29,0);
     display->applySpriteToScreen(hs,0,0);
 
-    hs->drawRect(0,0,539,29,0);
-    display->applySpriteToScreen(hs,15,15);
-
     // Render application
     app->render(display);
-    applicationContext_->getApplicationSprite()->drawRect(0,0,200,200,0);
-    display->applySpriteToScreen(applicationContext_->getApplicationSprite(),100,100);
+    display->applySpriteToScreen(applicationContext_->getApplicationSprite(),0,29);
   }
   display->endTransaction();
 

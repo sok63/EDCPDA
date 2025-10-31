@@ -1,6 +1,6 @@
 #include "MenuApp.h"
 
-MenuApp::MenuApp(ApplicationContext *context, ApplicationManager *appManager)
+MenuApp::MenuApp(ApplicationContext *context, ApplicationManager *appManager): context_(context), appManager_(appManager)
 {
 }
 
@@ -32,9 +32,7 @@ void MenuApp::update(uint32_t deltaTime)
 void MenuApp::render(ADisplayHAL *display)
 {
     needRedraw_ = false;
-
-
-
+    context_->getApplicationSprite()->drawRect(0,0,539,929,0);
 }
 
 const char *MenuApp::getName() const
