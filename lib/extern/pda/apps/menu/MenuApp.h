@@ -2,6 +2,25 @@
 #include <pda/apps/ApplicationContext.h>
 #include <pda/ApplicationManager.h>
 
+
+struct Position {
+    int x;
+    int y;
+};
+
+
+struct ApplicationRectInfo {
+    uint32_t applicationIdx_;
+    Position rect_;
+    Position icon_;
+    Position text_;
+    uint32_t width;
+    uint32_t height;
+    uint32_t column;
+    uint32_t row;
+};
+
+
 class MenuApp : public AApplication {
 public:
     MenuApp(ApplicationContext* context, ApplicationManager* appManager);
@@ -25,14 +44,18 @@ public:
     static AApplication* create(ApplicationContext* context);
 
 private:
-    ApplicationContext* context_;
-    ApplicationManager* appManager_;
-    
-    size_t selectedIndex_;
-    size_t scrollOffset_;
-    
     void drawMenu();
     void handleTouch(int16_t x, int16_t y);
     
+    void calculateApplicationRectInfo(uint32_t applicationIndex);
+
+private:
+    ApplicationContext* context_;
+    ApplicationManager* appManager_;
+    
+    ApplicationRectInfo rect_;
+
+    size_t selectedIndex_ = 0;
+    size_t pageNum_ = 0;
 
 };

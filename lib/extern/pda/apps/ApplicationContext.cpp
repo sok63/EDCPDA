@@ -5,9 +5,19 @@ ApplicationContext::ApplicationContext(ADisplayHAL *display, ATouchHAL *touch, A
 {
 }
 
+void ApplicationContext::setApplicationSprite(ADisplaySpriteHAL *sprite)
+{
+    application_sprite_ = sprite;
+}
+
 ADisplayHAL *ApplicationContext::getDisplay() const
 {
     return display_;
+}
+
+ADisplaySpriteHAL *ApplicationContext::getApplicationSprite() const
+{
+    return application_sprite_;
 }
 
 ATouchHAL *ApplicationContext::getTouch() const

@@ -18,11 +18,17 @@ public:
     void wakeup() override;
     void powerOff() override;
 
-    ADisplaySpriteHAL* getScreenSprite() override;
-    ADisplaySpriteHAL* getNewSprite() override;
+    ADisplaySpriteHAL* getHeaderSprite() override;
+    ADisplaySpriteHAL* getNewSprite(uint32_t width, uint32_t height, uint32_t bpp) override;
+
     void deleteSprite(ADisplaySpriteHAL*) override;
+    void applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y) override;
 
 private:
+     M5Canvas* getNewCanvas(uint32_t width, uint32_t height, uint32_t bpp);
+
+private:
+    bool transparent_ = false;
     M5Canvas* canvas_raw_;
     PaperS3DisplaySpriteHAL* canvas_;
 };

@@ -14,6 +14,7 @@
 class ApplicationContext {
 private:
     ADisplayHAL* display_;
+    ADisplaySpriteHAL* application_sprite_ = nullptr;
     ATouchHAL* touch_;
     AStorageHAL* storage_;
     ARTCHAL* rtc_;
@@ -27,7 +28,10 @@ public:
                ARTCHAL* rtc, APowerHAL* power, EventService* eventService,
                ConfigService* configService, TimerService* timerService);
     
+    void setApplicationSprite(ADisplaySpriteHAL*);
+
     ADisplayHAL* getDisplay() const;
+    ADisplaySpriteHAL* getApplicationSprite() const;
     ATouchHAL* getTouch() const;
     AStorageHAL* getStorage() const;
     ARTCHAL* getRTC() const; 

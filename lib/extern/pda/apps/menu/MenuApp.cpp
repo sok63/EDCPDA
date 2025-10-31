@@ -10,6 +10,7 @@ void MenuApp::onCreate()
 
 void MenuApp::onStart()
 {
+
 }
 
 void MenuApp::onResume()
@@ -30,8 +31,10 @@ void MenuApp::update(uint32_t deltaTime)
 
 void MenuApp::render(ADisplayHAL *display)
 {
-   needRedraw_ = false;
-   display->getScreenSprite()->drawRect(10,10,50,50,1);
+    needRedraw_ = false;
+
+
+
 }
 
 const char *MenuApp::getName() const
@@ -64,4 +67,16 @@ void MenuApp::drawMenu()
 
 void MenuApp::handleTouch(int16_t x, int16_t y)
 {
+}
+
+void MenuApp::calculateApplicationRectInfo(uint32_t idx)
+{
+   rect_.applicationIdx_ = idx;
+
+    // Вычисляем ряд и колонку
+    rect_.row = (idx - 1) / 3;
+    rect_.column = (idx - 1) % 3;
+
+    
+
 }

@@ -8,7 +8,10 @@
 
 void PaperS3::init()
 {
-    M5.begin();
+
+    auto cfg = M5.config();
+    M5.begin(cfg);
+
 
     setDisplayHAL(new PaperS3DisplayHAL());
     setTouchHAL(new PaperS3TouchHAL());
@@ -25,6 +28,9 @@ void PaperS3::init()
     setApplicationRegistry(new ApplicationRegistry());
     setApplicationContext(new ApplicationContext(getDisplayHAL(),getTouchHAL(),getStorageHAL(),getRTCHAL(),getPowerHAL(),getEventService(),getConfigService(),getTimerService()));    
     setApplicationManager(new ApplicationManager(getApplicationRegistry(),getApplicationContext()));
+
+    // Set default application sprite
+    getApplicationContext()->setApplicationSprite(getDisplayHAL()->getNewSprite(540,930,1));
 
 }
 

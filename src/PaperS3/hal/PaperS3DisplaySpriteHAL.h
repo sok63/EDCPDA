@@ -18,6 +18,8 @@ public:
     void drawText(int16_t x, int16_t y, const char* text, uint16_t color, uint8_t size) override;
     uint16_t width() const override;
     uint16_t height() const override;
+
+    M5Canvas* get_canvas(); 
 private:
-    M5Canvas* canvas_ = nullptr;
+    M5Canvas* canvas_;
 };

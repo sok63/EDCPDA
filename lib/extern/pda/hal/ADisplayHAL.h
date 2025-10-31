@@ -17,7 +17,9 @@ public:
     virtual void wakeup() = 0;
     virtual void powerOff() = 0;
 
-    virtual ADisplaySpriteHAL* getScreenSprite() = 0;
-    virtual ADisplaySpriteHAL* getNewSprite() = 0;
+    virtual ADisplaySpriteHAL* getHeaderSprite() = 0;
+    virtual ADisplaySpriteHAL* getNewSprite(uint32_t width, uint32_t height, uint32_t bpp)  = 0;
+
     virtual void deleteSprite(ADisplaySpriteHAL*) = 0;
+    virtual void applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y) = 0;
 };

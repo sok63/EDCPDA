@@ -6,28 +6,20 @@
 void PaperS3DisplayHAL::init()
 {
     M5.Display.begin();
-
-    canvas_raw_ = new M5Canvas(&M5.Display);
-    canvas_ = new PaperS3DisplaySpriteHAL(canvas_raw_);
+    M5.Display.setRotation(90);
+    M5.Display.setEpdMode(epd_mode_t::epd_fastest); 
+    M5.Display.fillScreen(TFT_WHITE); 
+    M5.Display.setTextColor(TFT_BLACK);
 
     // ERRATA: / Fixes the automatic wake display issue
+    canvas_raw_ = new M5Canvas(&M5.Display);
     canvas_raw_->setColorDepth(1);
     canvas_raw_->createSprite(1, 1);  
     canvas_raw_->deleteSprite(); 
     // ERRATA: end /
 
-    M5.Display.setRotation(90);
-    
-    canvas_raw_->createSprite(540, 960);
-    canvas_raw_->setColor(TFT_WHITE);
-    canvas_raw_->fillScreen();
-
-   // M5.Display.startWrite();
-   // M5.Display.setEpdMode(epd_mode_t::epd_fastest);
-   // M5.Display.fillScreen(TFT_WHITE);
-   // M5.Display.setTextColor(TFT_BLACK);
-   // M5.Display.setTextSize(2);
-   // M5.Display.setCursor(0, 0);
+    canvas_ =  (PaperS3DisplaySpriteHAL*)getNewSprite(540,30,1);
+    canvas_raw_ = canvas_->get_canvas();
 }
 
 void PaperS3DisplayHAL::beginTransaction()
@@ -42,7 +34,6 @@ void PaperS3DisplayHAL::endTransaction()
 
 void PaperS3DisplayHAL::refresh()
 {
-    canvas_raw_->pushSprite(0, 0);
     M5.Display.display();
     M5.Display.waitDisplay();
 }
@@ -72,16 +63,36 @@ void PaperS3DisplayHAL::powerOff()
     delay(200);
 }
 
-ADisplaySpriteHAL *PaperS3DisplayHAL::getScreenSprite()
+ADisplaySpriteHAL *PaperS3DisplayHAL::getHeaderSprite()
 {
     return canvas_;
 }
 
-ADisplaySpriteHAL *PaperS3DisplayHAL::getNewSprite()
+ADisplaySpriteHAL *PaperS3DisplayHAL::getNewSprite(uint32_t width, uint32_t height, uint32_t bpp) 
 {
-    return nullptr;
+    return new PaperS3DisplaySpriteHAL(getNewCanvas(width,height,bpp));
 }
 
 void PaperS3DisplayHAL::deleteSprite(ADisplaySpriteHAL *)
 {
+
+}
+
+void PaperS3DisplayHAL::applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y)
+{
+    if(!sprite) return;
+    auto canvas = ((PaperS3DisplaySpriteHAL*) sprite)->get_canvas();
+    if(!canvas) return;
+
+    if(!transparent_) canvas->pushSprite(x,y);
+    else canvas->pushSprite(x,y,TFT_TRANSPARENT); 
+}
+
+M5Canvas *PaperS3DisplayHAL::getNewCanvas(uint32_t width, uint32_t height, uint32_t bpp)
+{
+    auto canvas = new M5Canvas(&M5.Display);
+    canvas->setColorDepth(bpp); 
+    canvas->createSprite(width, height);
+    canvas->fillScreen(TFT_WHITE);  
+    return canvas;
 }
