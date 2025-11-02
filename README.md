@@ -4,6 +4,11 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
 ## Applicaitons
 
+### Header 
+
+- [+] Separate 'special' application 
+- [+] Draw time
+
 ### Menu
 
 ![ Menu status](screenshots/menu.jpg "Menu status")
@@ -16,3 +21,8 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 ### Maps
 
 No work on maps at this time
+
+
+### Reader
+
+No work on reader at this time

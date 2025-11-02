@@ -27,32 +27,7 @@ void MapsApp::onEvent(const Event &event)
 {
 }
 
-AApplication *MapsApp::create(ApplicationContext *context)
-{
-    return nullptr;
-}
-
 MapsApp::MapsApp(ApplicationContext *context, ApplicationManager *appManager)
-{
-}
-
-void MapsApp::onCreate()
-{
-}
-
-void MapsApp::onStart()
-{
-}
-
-void MapsApp::onResume()
-{
-}
-
-void MapsApp::onPause()
-{
-}
-
-void MapsApp::onStop()
 {
 }
 
@@ -60,6 +35,6 @@ void MapsApp::update(uint32_t deltaTime)
 {
 }
 
-void MapsApp::render(ADisplayHAL *display)
+void MapsApp::render()
 {
 }

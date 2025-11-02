@@ -42,15 +42,17 @@ void PaperS3::launch()
 void PaperS3::update()
 {
     M5.update();
-        
-    // Process hardware events
-    if (getTouchHAL()->available()) {
-        TouchPoint point = getTouchHAL()->getPoint();
-        Event event;
-        event.type = point.pressed ? EventType::TOUCH_PRESS : EventType::TOUCH_RELEASE;
-        event.data = &point;
-        event.timestamp = millis();
-        getEventService()->postEvent(event);
+    
+    // Process touches
+    getTouchHAL()->update();
+    auto touch = getTouchHAL()->getNext();
+    if (touch.type!=eGestureType::NONE) {
+        // TouchPoint point = getTouchHAL()->getPoint();
+        // Event event;
+        // event.type = point.pressed ? EventType::TOUCH_PRESS : EventType::TOUCH_RELEASE;
+        // event.data = &point;
+        // event.timestamp = millis();
+        // getEventService()->postEvent(event);
     }
     
     // Update services

@@ -7,7 +7,6 @@ public:
     virtual ~PaperS3TouchHAL() = default;
     
     void init() override;
-    bool available() override;
-    TouchPoint getPoint() override;
-    bool isPressed() override;
+    sTouchAction getNext() override;
+    void update() override;
 };

@@ -12,16 +12,16 @@ public:
     virtual ~AApplication() = default;
     
     // Lifecycle methods
-    virtual void onCreate() = 0;
-    virtual void onStart() = 0;
-    virtual void onResume() = 0;
-    virtual void onPause() = 0;
-    virtual void onStop() = 0;
+    virtual void onCreate();
+    virtual void onStart();
+    virtual void onResume();
+    virtual void onPause();
+    virtual void onStop();
     
     // Update loop
     virtual void update(uint32_t deltaTime) = 0;
     bool needRedraw();
-    virtual void render(ADisplayHAL* display) = 0;
+    virtual void render() = 0;
     
     // App info
     eApplicationState getState();

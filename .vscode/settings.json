@@ -4,6 +4,8 @@
         "deque": "cpp",
         "list": "cpp",
         "string": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "cstdint": "cpp",
+        "cmath": "cpp"
     }
 }

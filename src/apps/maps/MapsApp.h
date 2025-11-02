@@ -7,22 +7,14 @@ public:
     MapsApp(ApplicationContext* context, ApplicationManager* appManager);
     virtual ~MapsApp() = default;
     
-    void onCreate() override;
-    void onStart() override;
-    void onResume() override;
-    void onPause() override;
-    void onStop() override;
-    
     void update(uint32_t deltaTime) override;
-    void render(ADisplayHAL* display) override;
+    void render() override;
     
     const char* getName() const override;
     const char* getDescription() const override;
     const uint8_t* getIcon() const override;
     
     void onEvent(const Event& event) override;
-    
-    static AApplication* create(ApplicationContext* context);
 
 private:
     ApplicationContext* context_;

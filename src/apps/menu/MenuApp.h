@@ -36,22 +36,14 @@ public:
     MenuApp(ApplicationContext* context, ApplicationManager* appManager);
     virtual ~MenuApp() = default;
     
-    void onCreate() override;
-    void onStart() override;
-    void onResume() override;
-    void onPause() override;
-    void onStop() override;
-    
     void update(uint32_t deltaTime) override;
-    void render(ADisplayHAL* display) override;
+    void render() override;
     
     const char* getName() const override;
     const char* getDescription() const override;
     const uint8_t* getIcon() const override;
     
     void onEvent(const Event& event) override;
-    
-    static AApplication* create(ApplicationContext* context);
 
 private:
     void drawMenu();
@@ -61,7 +53,9 @@ private:
     void calculateCellRect(uint32_t row, uint32_t column);
     
     // Draw widgets section
-    void drawTimeWidget();
+    void drawDateTimeBlock();
+    void drawSliderBlock();
+    void drawFastAccessBlock();
     void drawAppAtCell(uint32_t appNum, uint32_t position);
 
 private:

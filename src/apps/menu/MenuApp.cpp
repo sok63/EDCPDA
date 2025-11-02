@@ -5,37 +5,16 @@ MenuApp::MenuApp(ApplicationContext *context, ApplicationManager *appManager): c
 {
 }
 
-void MenuApp::onCreate()
-{
-}
-
-void MenuApp::onStart()
-{
-
-}
-
-void MenuApp::onResume()
-{
-}
-
-void MenuApp::onPause()
-{
-}
-
-void MenuApp::onStop()
-{
-}
-
 void MenuApp::update(uint32_t deltaTime)
 {
 }
 
-void MenuApp::render(ADisplayHAL *display)
+void MenuApp::render()
 {
     needRedraw_ = false;
     auto sprite = context_->getApplicationSprite();
 
-    // Draw cell grid
+    // TEMPORARY: Draw cell grid
     for(auto idx=0;idx<=32;idx++){
         calculateCellRect(idx);
 
@@ -43,10 +22,18 @@ void MenuApp::render(ADisplayHAL *display)
         sprite->drawRect(rect_.x,rect_.y,rect_.width,rect_.height,0);
     }
 
-    drawTimeWidget();
+    // [0:1] Time block
+    drawDateTimeBlock();
+
+    // [2:19] Application blocks
     drawAppAtCell(1,2);
+    drawAppAtCell(2,3);
     
-   // context_->getApplicationSprite()->drawRect(0,0,539,929,0);
+    
+    // [20:23] Slide area
+
+    // [24:27] Fast access area
+
 }
 
 const char *MenuApp::getName() const
@@ -66,11 +53,6 @@ const uint8_t *MenuApp::getIcon() const
 
 void MenuApp::onEvent(const Event &event)
 {
-}
-
-AApplication *MenuApp::create(ApplicationContext *context)
-{
-    return nullptr;
 }
 
 void MenuApp::drawMenu()
@@ -99,23 +81,11 @@ void MenuApp::calculateCellRect(uint32_t row, uint32_t column)
     rect_.width = CELL_SIZE;
     rect_.height = CELL_SIZE;
 
-
     rect_.x = CELL_SPACING + row * (CELL_SIZE + CELL_SPACING);
     rect_.y = CELL_SPACING + column * (CELL_SIZE + CELL_SPACING);
-
-    // rect_.applicationIdx_ = idx;
-
-    // rect_.row = (idx - 1) / 3;
-    // rect_.column = (idx - 1) % 3;
-    
-    // rect_.width = 180;
-    // rect_.height = 230;
-    
-    // rect_.x = rect_.column * rect_.width;
-    // rect_.y = 10 + (rect_.row * rect_.height);
 }
 
-void MenuApp::drawTimeWidget()
+void MenuApp::drawDateTimeBlock()
 {
   auto dt = context_->getRTC()->getDateTime();
   auto sprite = context_->getApplicationSprite();
@@ -126,7 +96,8 @@ void MenuApp::drawTimeWidget()
     char timeStr[16];
     sprintf(timeStr, "%02d:%02d", dt.hour, dt.minute);
     uint32_t text_width = sprite->getTextWidth(timeStr,7);
-    sprite->drawText(rect_.x + (CELL_SPACING + rect_.width*2 - text_width)/2,rect_.y+10,timeStr,0,7);
+    uint32_t text_height = sprite->getTextHeight(timeStr,7);
+    sprite->drawText(rect_.x + CELL_SIZE+CELL_SPACING/2 - (text_width)/2,rect_.y+MINIMAL_SPACING*2,timeStr,0,7);
   }
 
   // Line 2 - Date, Day of the week
@@ -136,14 +107,22 @@ void MenuApp::drawTimeWidget()
   };
 
   char dateStr[64];
-  sprintf(dateStr, "%02d.%02d.%04d, %s", 
+  sprintf(dateStr, "%02d.%02d.%04d %s", 
           dt.day, 
           dt.month, 
           dt.year,
           daysOfWeek[dt.weekDay]);
   uint32_t text_width = sprite->getTextWidth(dateStr,2);
-  sprite->drawText(rect_.x + (CELL_SPACING + rect_.width*2 - text_width)/2,rect_.y+80,dateStr,0,2);
+      uint32_t text_height = sprite->getTextHeight(dateStr,2);
+  sprite->drawText(rect_.x + CELL_SIZE+CELL_SPACING/2 - (text_width)/2,rect_.y+ CELL_SIZE- text_height - MINIMAL_SPACING,dateStr,0,2);
+}
 
+void MenuApp::drawSliderBlock()
+{
+}
+
+void MenuApp::drawFastAccessBlock()
+{
 }
 
 void MenuApp::drawAppAtCell(uint32_t appNum, uint32_t position)
