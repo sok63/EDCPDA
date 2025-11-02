@@ -2,23 +2,17 @@
 
 Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
-## Status
+## Applicaitons
 
-Future Menu application draw rect primitive to screen once.
+### Menu
 
-## Roadmap
+![ Menu status](screenshots/menu.jpg "Menu status")
 
-### Early work
+- [+] Work with RTC hal API
+- [+] Use CELL grid to place widgets
+- [+] Draw apps at any cell
+- [+] Draw datetime information in 2 merged cell
 
-- [+] Architecture split logic on differnt layers
-- [+] Add different states to apps
-- [+] First work with screen
-- [+] Application draw primitive to screen - full stack call
+### Maps
 
-### TODO:
-
-- [ ] Apps somehow can regulate update rate
-- [ ] Apps somehow can switch device to sleep / deepsleep / poweroff
-- [ ] On PowerOff Menu app set screenlock
-- [ ] Split project to *Name*-Core and *Name*-PaperS3
-
+No work on maps at this time

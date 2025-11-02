@@ -7,7 +7,7 @@ void PaperS3DisplayHAL::init()
 {
     M5.Display.begin();
     M5.Display.setRotation(90);
-    M5.Display.setEpdMode(epd_mode_t::epd_fastest); 
+    M5.Display.setEpdMode(epd_mode_t::epd_quality); 
     M5.Display.fillScreen(TFT_WHITE); 
     M5.Display.setTextColor(TFT_BLACK);
 

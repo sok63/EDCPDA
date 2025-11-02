@@ -26,6 +26,22 @@ void PaperS3DisplaySpriteHAL::drawRect(int16_t x, int16_t y, int16_t w, int16_t 
 
 void PaperS3DisplaySpriteHAL::drawText(int16_t x, int16_t y, const char *text, uint16_t color, uint8_t size)
 {
+   // canvas_->setTextDatum(textdatum_t::top_left);  
+    canvas_->setTextSize(size);
+    canvas_->setTextColor(color);
+    canvas_->drawString(text,x,y);
+}
+
+uint16_t PaperS3DisplaySpriteHAL::getTextWidth(const char *text, uint8_t size)
+{
+    canvas_->setTextSize(size);
+    return (uint16_t) canvas_->textWidth(text);
+}
+
+uint16_t PaperS3DisplaySpriteHAL::getTextHeight(const char *text, uint8_t size)
+{
+    canvas_->setTextSize(size);
+    return (uint16_t) canvas_->fontHeight();
 }
 
 uint16_t PaperS3DisplaySpriteHAL::width() const

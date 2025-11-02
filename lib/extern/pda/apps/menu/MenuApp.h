@@ -2,6 +2,16 @@
 #include <pda/apps/ApplicationContext.h>
 #include <pda/ApplicationManager.h>
 
+#define MINIMAL_SPACING 10
+
+#define CELLS_IN_ROW 4
+#define CELLS_IN_COLUMN 7
+
+#define CELL_SIZE 110
+#define CELL_SPACING 20
+
+#define ICON_SIZE 80
+
 
 struct Position {
     int x;
@@ -9,15 +19,15 @@ struct Position {
 };
 
 
-struct ApplicationRectInfo {
-    uint32_t applicationIdx_;
-    Position rect_;
-    Position icon_;
-    Position text_;
-    uint32_t width;
-    uint32_t height;
+struct CellRectInfo {
+    uint32_t idx;
     uint32_t column;
     uint32_t row;
+
+    uint32_t width;
+    uint32_t height;
+    uint32_t x;
+    uint32_t y;
 };
 
 
@@ -47,13 +57,18 @@ private:
     void drawMenu();
     void handleTouch(int16_t x, int16_t y);
     
-    void calculateApplicationRectInfo(uint32_t applicationIndex);
+    void calculateCellRect(uint32_t position);
+    void calculateCellRect(uint32_t row, uint32_t column);
+    
+    // Draw widgets section
+    void drawTimeWidget();
+    void drawAppAtCell(uint32_t appNum, uint32_t position);
 
 private:
     ApplicationContext* context_;
     ApplicationManager* appManager_;
     
-    ApplicationRectInfo rect_;
+    CellRectInfo rect_;
 
     size_t selectedIndex_ = 0;
     size_t pageNum_ = 0;
