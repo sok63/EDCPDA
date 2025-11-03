@@ -25,6 +25,8 @@ void PaperS3::init()
     getRTCHAL()->init();
     getPowerHAL()->init();
 
+    setEventService(new EventService());
+
     setApplicationRegistry(new ApplicationRegistry());
     setApplicationContext(new ApplicationContext(getDisplayHAL(),getTouchHAL(),getStorageHAL(),getRTCHAL(),getPowerHAL(),getEventService(),getConfigService(),getTimerService()));    
     setApplicationManager(new ApplicationManager(getApplicationRegistry(),getApplicationContext()));
@@ -46,18 +48,16 @@ void PaperS3::update()
     // Process touches
     getTouchHAL()->update();
     auto touch = getTouchHAL()->getNext();
-    if (touch.type!=eGestureType::NONE) {
-        // TouchPoint point = getTouchHAL()->getPoint();
-        // Event event;
-        // event.type = point.pressed ? EventType::TOUCH_PRESS : EventType::TOUCH_RELEASE;
-        // event.data = &point;
-        // event.timestamp = millis();
-        // getEventService()->postEvent(event);
+    if (touch.gesture!=eGestureType::NONE) {
+        Event event;
+        event.type = eEventType::TOUCH_EVENT;
+        memcpy(event.data,&touch,sizeof(touch));
+        event.timestamp = millis();
+        getEventService()->postEvent(event);
     }
     
     // Update services
     getTimerService()->update();
-    getEventService()->processEvents();
     
     // Update and render app
     getApplicationManager()->update();

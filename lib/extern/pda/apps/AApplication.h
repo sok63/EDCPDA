@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include <pda/hal/ADisplayHAL.h>
-#include <pda/sal/EventService.h>
+#include <pda/events/EventService.h>
 
 enum class eApplicationState { STOPPED, RUNNING, PAUSED };
 

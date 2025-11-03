@@ -2,12 +2,22 @@
 
 Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
+## System
+
+- [+] Touch events now can handle in apps
+- [+] Support touch events: tap, doble tap, swipe in four direction, long press, drag.
+
 ## Applicaitons
 
 ### Header 
 
 - [+] Separate 'special' application 
 - [+] Draw time
+- [ ] Draw battery text
+- [ ] Draw battery graphically
+- [ ] Draw BT icon
+- [ ] Draw WiFi icon
+- [ ] Draw DEBUG info (free RAM size)
 
 ### Menu
 

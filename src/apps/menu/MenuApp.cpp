@@ -1,8 +1,12 @@
 #include "MenuApp.h"
 #include <cstdio>
 
+#include <M5Unified.h>
+
+
 MenuApp::MenuApp(ApplicationContext *context, ApplicationManager *appManager): context_(context), appManager_(appManager)
 {
+   context_->getEventService()->addListener(this);
 }
 
 void MenuApp::update(uint32_t deltaTime)
@@ -53,6 +57,61 @@ const uint8_t *MenuApp::getIcon() const
 
 void MenuApp::onEvent(const Event &event)
 {
+
+  // Process event
+    if(event.type != eEventType::TOUCH_EVENT) return;
+
+    sTouchEvent *touch = (sTouchEvent*)(&(event.data));
+
+
+        switch (touch->gesture) {
+            case eGestureType::ONEF_TAP:
+                Serial.printf("  Single tap at (%d, %d)\n", touch->x, touch->y);
+                break;
+                
+            case eGestureType::ONEF_DOUBLE_TAP:
+                Serial.printf("  Double tap at (%d, %d)\n", touch->x, touch->y);
+                break;
+                
+            case eGestureType::ONEF_LONG_PRESS:
+                Serial.printf("  Long press at (%d, %d), duration: %lu ms\n", 
+                             touch->x, touch->y, touch->duration);
+                break;
+                
+            case eGestureType::ONEF_SWIPE_UP:
+                Serial.printf("  Swipe UP from (%d, %d) to (%d, %d), delta: (%d, %d)\n",
+                             touch->startX, touch->startY, touch->x, touch->y,
+                             touch->deltaX, touch->deltaY);
+                break;            
+            case eGestureType::ONEF_SWIPE_DOWN:
+                Serial.printf("  Swipe DOWN from (%d, %d) to (%d, %d), delta: (%d, %d)\n",
+                             touch->startX, touch->startY, touch->x, touch->y,
+                             touch->deltaX, touch->deltaY);
+                break;            
+            case eGestureType::ONEF_SWIPE_LEFT:
+                Serial.printf("  Swipe LEFT from (%d, %d) to (%d, %d), delta: (%d, %d)\n",
+                             touch->startX, touch->startY, touch->x, touch->y,
+                             touch->deltaX, touch->deltaY);
+                break;
+            case eGestureType::ONEF_SWIPE_RIGHT:
+                Serial.printf("  Swipe RIGHT from (%d, %d) to (%d, %d), delta: (%d, %d)\n",
+                             touch->startX, touch->startY, touch->x, touch->y,
+                             touch->deltaX, touch->deltaY);
+                break;
+                
+            case eGestureType::ONEF_DRAG_START:
+                Serial.printf("  Drag started at (%d, %d)\n", touch->startX, touch->startY);
+                break;
+                
+            case eGestureType::ONEF_DRAG_END:
+                Serial.printf("  Drag ended at (%d, %d), total delta: (%d, %d), duration: %lu ms\n",
+                             touch->x, touch->y, touch->deltaX, touch->deltaY, touch->duration);
+                break;
+                
+            default:
+                break;
+        }
+ 
 }
 
 void MenuApp::drawMenu()

@@ -6,7 +6,7 @@
 #include <pda/hal/ARTCHAL.h>
 #include <pda/hal/APowerHAL.h>
 
-#include <pda/sal/EventService.h>
+#include <pda/events/EventService.h>
 #include <pda/sal/ConfigService.h>
 #include <pda/sal/TimeService.h>
 

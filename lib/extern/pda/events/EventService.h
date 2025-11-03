@@ -3,20 +3,21 @@
 #include <cstdint>
 #include <cstddef>
 
-enum class EventType {
-    TOUCH_PRESS,
-    TOUCH_RELEASE,
-    BUTTON_PRESS,
-    TIMER_TICK,
-    POWER_LOW,
-    APP_EXIT
+enum class eEventType {
+    UNKNOWN_TYPE,
+    TOUCH_EVENT,
+    BUTTON_EVENT,
+    TIMER_EVENT,
+    POWER_EVENT,
+    APPLICATION_EVENT
 };
 
 struct Event {
-    EventType type;
-    void* data;
+    eEventType type = eEventType::UNKNOWN_TYPE;
+    uint8_t data[32];
     uint32_t timestamp;
 };
+
 
 class AEventListener {
 public:
@@ -31,14 +32,8 @@ public:
     void addListener(AEventListener* listener);
     void removeListener(AEventListener* listener);
     void postEvent(const Event& event);
-    void processEvents();
     
 private:
     static const size_t MAX_LISTENERS = 10;
     AEventListener* listeners_[MAX_LISTENERS];
-    size_t listenerCount_;
-    
-    Event eventQueue_[32];
-    size_t queueHead_;
-    size_t queueTail_;
 };
