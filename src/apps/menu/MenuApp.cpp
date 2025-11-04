@@ -194,7 +194,7 @@ void MenuApp::drawAppAtCell(uint32_t appNum, uint32_t position)
     sprite->drawRect(rect_.x,rect_.y,rect_.width,rect_.height,0);
 
     // Draw Icon
-    sprite->drawRect(rect_.x+(CELL_SIZE - ICON_SIZE)/2,rect_.y+MINIMAL_SPACING,ICON_SIZE,ICON_SIZE,0);
+    sprite->drawRoundRect(rect_.x+(CELL_SIZE - ICON_SIZE)/2,rect_.y+MINIMAL_SPACING,ICON_SIZE,ICON_SIZE,5,0);
 
     // Draw App name
     auto app = appManager_->getApplicationRegistry()->getApplication(appNum);

@@ -24,6 +24,12 @@ void PaperS3DisplaySpriteHAL::drawRect(int16_t x, int16_t y, int16_t w, int16_t 
     canvas_->drawRect(x,y,w,h);
 }
 
+void PaperS3DisplaySpriteHAL::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color)
+{
+    canvas_->setColor(color);
+    canvas_->drawRoundRect(x,y,w,h,r);
+}
+
 void PaperS3DisplaySpriteHAL::drawText(int16_t x, int16_t y, const char *text, uint16_t color, uint8_t size)
 {
    // canvas_->setTextDatum(textdatum_t::top_left);  

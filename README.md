@@ -2,6 +2,10 @@
 
 Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
+## Core fatures
+
+- High abstraction layers (HAL/Services/Applications)
+
 ## System
 
 - [+] Touch events now can handle in apps
@@ -11,8 +15,9 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
 ### Header 
 
-- [+] Separate 'special' application 
+- [+] Header is separate 'special' application 
 - [+] Draw time
+- [ ] Can grow to show special buttons
 - [ ] Draw battery text
 - [ ] Draw battery graphically
 - [ ] Draw BT icon
