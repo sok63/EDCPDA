@@ -9,6 +9,9 @@ public:
     virtual void init(uint16_t width, uint16_t height) = 0;
     virtual void clear() = 0;
     virtual void drawPixel(int16_t x, int16_t y, uint16_t color) = 0;
+
+    virtual void drawLine(int16_t x, int16_t y, int16_t x2, int16_t y2, uint16_t color) = 0;
+
     virtual void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) = 0;
     virtual void drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color) = 0;
     

@@ -17,9 +17,6 @@ void PaperS3DisplayHAL::init()
     canvas_raw_->createSprite(1, 1);  
     canvas_raw_->deleteSprite(); 
     // ERRATA: end /
-
-    canvas_ =  (PaperS3DisplaySpriteHAL*)getNewSprite(540,30,1);
-    canvas_raw_ = canvas_->get_canvas();
 }
 
 void PaperS3DisplayHAL::beginTransaction()
@@ -32,8 +29,19 @@ void PaperS3DisplayHAL::endTransaction()
     M5.Display.endWrite();
 }
 
+void PaperS3DisplayHAL::setNeedRedraw()
+{
+    need_redraw_ = true;
+}
+
+bool PaperS3DisplayHAL::isNeedRedraw()
+{
+    return need_redraw_;
+}
+
 void PaperS3DisplayHAL::refresh()
 {
+    need_redraw_ = false;
     M5.Display.display();
     M5.Display.waitDisplay();
 }
@@ -61,11 +69,6 @@ void PaperS3DisplayHAL::powerOff()
     M5.Display.sleep();
     M5.Display.waitDisplay();
     delay(200);
-}
-
-ADisplaySpriteHAL *PaperS3DisplayHAL::getHeaderSprite()
-{
-    return canvas_;
 }
 
 ADisplaySpriteHAL *PaperS3DisplayHAL::getNewSprite(uint32_t width, uint32_t height, uint32_t bpp) 

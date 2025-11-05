@@ -14,7 +14,7 @@ public:
     const char* getDescription() const override;
     const uint8_t* getIcon() const override;
     
-    void onEvent(const Event& event) override;
+    bool onEvent(const Event& event) override;
 
 private:
     ApplicationContext* context_;

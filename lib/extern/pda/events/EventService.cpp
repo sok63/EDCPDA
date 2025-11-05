@@ -44,6 +44,7 @@ void EventService::postEvent(const Event &event)
 {
     for(auto idx=0; idx<MAX_LISTENERS;idx++){
         if(listeners_[idx] == nullptr) continue;
-        listeners_[idx]->onEvent(event);
+        // If listner process event - stop post event to next Listners
+        if(listeners_[idx]->onEvent(event)) return;
     }
 }

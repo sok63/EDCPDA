@@ -1,12 +1,14 @@
 #include "PaperS3PowerHAL.h"
 
+#include <M5Unified.h>
+
 void PaperS3PowerHAL::init()
 {
 }
 
 uint8_t PaperS3PowerHAL::getBatteryLevel()
 {
-    return 0;
+    return M5.Power.getBatteryLevel();
 }
 
 bool PaperS3PowerHAL::isCharging()

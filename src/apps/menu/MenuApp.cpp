@@ -15,8 +15,8 @@ void MenuApp::update(uint32_t deltaTime)
 
 void MenuApp::render()
 {
-    needRedraw_ = false;
     auto sprite = context_->getApplicationSprite();
+    sprite->clear();
 
     // TEMPORARY: Draw cell grid
     for(auto idx=0;idx<=32;idx++){
@@ -37,7 +37,9 @@ void MenuApp::render()
     // [20:23] Slide area
 
     // [24:27] Fast access area
-
+    
+    // Set it here for now
+    context_->getDisplay()->applySpriteToScreen(context_->getApplicationSprite(),0,29);
 }
 
 const char *MenuApp::getName() const
@@ -55,11 +57,11 @@ const uint8_t *MenuApp::getIcon() const
     return nullptr;
 }
 
-void MenuApp::onEvent(const Event &event)
+bool MenuApp::onEvent(const Event &event)
 {
 
   // Process event
-    if(event.type != eEventType::TOUCH_EVENT) return;
+    if(event.type != eEventType::TOUCH_EVENT) return false;
 
     sTouchEvent *touch = (sTouchEvent*)(&(event.data));
 
@@ -111,7 +113,7 @@ void MenuApp::onEvent(const Event &event)
             default:
                 break;
         }
- 
+   return false;
 }
 
 void MenuApp::drawMenu()

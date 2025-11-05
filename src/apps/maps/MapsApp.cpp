@@ -23,8 +23,9 @@ const uint8_t *MapsApp::getIcon() const
     return nullptr;
 }
 
-void MapsApp::onEvent(const Event &event)
+bool MapsApp::onEvent(const Event &event)
 {
+    return false;
 }
 
 MapsApp::MapsApp(ApplicationContext *context, ApplicationManager *appManager)

@@ -22,7 +22,7 @@ struct Event {
 class AEventListener {
 public:
     virtual ~AEventListener() = default;
-    virtual void onEvent(const Event& event) = 0;
+    virtual bool onEvent(const Event& event) = 0;
 };
 
 class EventService {

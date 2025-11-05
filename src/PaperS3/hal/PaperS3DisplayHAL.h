@@ -11,6 +11,8 @@ public:
     void init() override;
     void beginTransaction() override;
     void endTransaction() override;
+    void setNeedRedraw() override;
+    bool isNeedRedraw() override;
     void refresh() override;
     uint16_t width() const override;
     uint16_t height() const override;
@@ -18,7 +20,6 @@ public:
     void wakeup() override;
     void powerOff() override;
 
-    ADisplaySpriteHAL* getHeaderSprite() override;
     ADisplaySpriteHAL* getNewSprite(uint32_t width, uint32_t height, uint32_t bpp) override;
 
     void deleteSprite(ADisplaySpriteHAL*) override;
@@ -28,6 +29,7 @@ private:
      M5Canvas* getNewCanvas(uint32_t width, uint32_t height, uint32_t bpp);
 
 private:
+    bool need_redraw_ = true;
     bool transparent_ = false;
     M5Canvas* canvas_raw_;
     PaperS3DisplaySpriteHAL* canvas_;

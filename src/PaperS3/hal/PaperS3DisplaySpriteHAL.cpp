@@ -11,7 +11,7 @@ void PaperS3DisplaySpriteHAL::init(uint16_t width, uint16_t height)
 
 void PaperS3DisplaySpriteHAL::clear()
 {
-    canvas_->clear(TFT_TRANSPARENT);
+    canvas_->clear(TFT_WHITE);
 }
 
 void PaperS3DisplaySpriteHAL::drawPixel(int16_t x, int16_t y, uint16_t color)
@@ -22,6 +22,12 @@ void PaperS3DisplaySpriteHAL::drawRect(int16_t x, int16_t y, int16_t w, int16_t 
 {
     canvas_->setColor(color);
     canvas_->drawRect(x,y,w,h);
+}
+
+void PaperS3DisplaySpriteHAL::drawLine(int16_t x, int16_t y, int16_t x2, int16_t y2, uint16_t color)
+{  
+    canvas_->setColor(color);
+    canvas_->drawLine(x,y,x2,y2);
 }
 
 void PaperS3DisplaySpriteHAL::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color)
@@ -52,12 +58,12 @@ uint16_t PaperS3DisplaySpriteHAL::getTextHeight(const char *text, uint8_t size)
 
 uint16_t PaperS3DisplaySpriteHAL::width() const
 {
-    return 0;
+    return canvas_->width();
 }
 
 uint16_t PaperS3DisplaySpriteHAL::height() const
 {
-    return 0;
+    return canvas_->height();
 }
 
 M5Canvas *PaperS3DisplaySpriteHAL::get_canvas()

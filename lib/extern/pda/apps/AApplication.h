@@ -20,7 +20,6 @@ public:
     
     // Update loop
     virtual void update(uint32_t deltaTime) = 0;
-    bool needRedraw();
     virtual void render() = 0;
     
     // App info
@@ -30,9 +29,8 @@ public:
     virtual const uint8_t* getIcon() const = 0; // 64x64 icon data
     
     // Event handling from IEventListener
-    virtual void onEvent(const Event& event) override = 0;
+    virtual bool onEvent(const Event& event) override = 0;
 
 protected:
-    bool needRedraw_ = true;
     eApplicationState state_ = eApplicationState::STOPPED;
 };

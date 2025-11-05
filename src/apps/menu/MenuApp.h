@@ -43,7 +43,7 @@ public:
     const char* getDescription() const override;
     const uint8_t* getIcon() const override;
     
-    void onEvent(const Event& event) override;
+    bool onEvent(const Event& event) override;
 
 private:
     void drawMenu();
@@ -62,6 +62,8 @@ private:
     ApplicationContext* context_;
     ApplicationManager* appManager_;
     
+
+
     CellRectInfo rect_;
 
     size_t selectedIndex_ = 0;

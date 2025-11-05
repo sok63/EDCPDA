@@ -2,6 +2,9 @@
 #include <pda/apps/ApplicationContext.h>
 #include <pda/ApplicationManager.h>
 
+
+
+
 class HeaderApplication : public AApplication {
 public:
     HeaderApplication(ApplicationContext* context, ApplicationManager* appManager);
@@ -14,16 +17,22 @@ public:
     const char* getDescription() const override;
     const uint8_t* getIcon() const override;
     
-    void onEvent(const Event& event) override;
+    bool onEvent(const Event& event) override;
 private:
-    void drawTimeBlock();
-    void drawBatteryBlock();
-    void drawDebugBlock();
+    
+    void drawCollapsedTimeBlock();
+    void drawCollapsedBatteryBlock();
+    void drawCollapsedDebugBlock();
     
 private:
+    bool extended_ = false;
+
     ApplicationContext* context_;
     ApplicationManager* appManager_;
     
+    ADisplaySpriteHAL* sprite_collapsed_ = nullptr;
+    ADisplaySpriteHAL* sprite_extended_ = nullptr;
+
     size_t selectedIndex_;
     size_t scrollOffset_;
 };

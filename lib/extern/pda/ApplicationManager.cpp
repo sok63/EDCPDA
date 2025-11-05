@@ -43,27 +43,22 @@ void ApplicationManager::update()
 
 void ApplicationManager::render()
 {
-  auto app = applicationRegistry_->getApplication(currentApp_);
-  auto header = applicationRegistry_->getHeaderApplication();
   auto display = applicationContext_->getDisplay();
 
-  if(!app->needRedraw()) return;
+  if(!display->isNeedRedraw()) return;
 
-
+  auto app = applicationRegistry_->getApplication(currentApp_);
+  auto header = applicationRegistry_->getHeaderApplication();
+    
   display->beginTransaction();
   {
-    // Render header
-    if(header){
-      header->render();
-      display->applySpriteToScreen( display->getHeaderSprite(),0,0);
-    }
-    // Render application
+    // Render at first app to screen, than header (cause header can overlap application)
     app->render();
-    display->applySpriteToScreen(applicationContext_->getApplicationSprite(),0,29);
+    header->render();
   }
   display->endTransaction();
 
-  // Apply to all
+  // Apply to screen
   display->refresh();
 }
 

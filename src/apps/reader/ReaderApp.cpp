@@ -27,6 +27,7 @@ const uint8_t *ReaderApp::getIcon() const
     return nullptr;
 }
 
-void ReaderApp::onEvent(const Event &event)
+bool ReaderApp::onEvent(const Event &event)
 {
+    return false;
 }
