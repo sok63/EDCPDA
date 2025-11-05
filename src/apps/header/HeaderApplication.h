@@ -27,6 +27,8 @@ private:
 private:
     bool extended_ = false;
 
+    uint64_t last_redraw_ = 0;
+
     ApplicationContext* context_;
     ApplicationManager* appManager_;
     

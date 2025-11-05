@@ -12,10 +12,13 @@ HeaderApplication::HeaderApplication(ApplicationContext *context, ApplicationMan
 
 void HeaderApplication::update(uint32_t deltaTime)
 {
+    if(last_redraw_ != (millis()/60000)) context_->getDisplay()->setNeedRedraw();
 }
 
 void HeaderApplication::render()
 {
+    last_redraw_ = millis() / 60000;
+
     if(extended_){
         sprite_extended_->clear();
         sprite_extended_->drawRect(0,0,sprite_extended_->width()-1,sprite_extended_->height()-1,0);
@@ -23,7 +26,7 @@ void HeaderApplication::render()
     } else {   
         sprite_collapsed_->clear();
         // Draw debug block (delete later)
-        sprite_collapsed_->drawRect(0,0,sprite_collapsed_->width()-1,sprite_collapsed_->height()-1,0);
+        //sprite_collapsed_->drawRect(0,0,sprite_collapsed_->width()-1,sprite_collapsed_->height()-1,0);
     
         // Draw normal blocks
         drawCollapsedTimeBlock();

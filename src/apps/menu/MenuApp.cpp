@@ -19,12 +19,10 @@ void MenuApp::render()
     sprite->clear();
 
     // TEMPORARY: Draw cell grid
-    for(auto idx=0;idx<=32;idx++){
-        calculateCellRect(idx);
-
-        // Draw full border for app placement
-        sprite->drawRect(rect_.x,rect_.y,rect_.width,rect_.height,0);
-    }
+    // for(auto idx=0;idx<=32;idx++){
+    //     calculateCellRect(idx);
+    //     sprite->drawRect(rect_.x,rect_.y,rect_.width,rect_.height,0);
+    // }
 
     // [0:1] Time block
     drawDateTimeBlock();
@@ -191,9 +189,6 @@ void MenuApp::drawAppAtCell(uint32_t appNum, uint32_t position)
     auto sprite = context_->getApplicationSprite();
     // Calculate CellRectInfo
     calculateCellRect(position);
-
-    // Draw full border for app placement
-    sprite->drawRect(rect_.x,rect_.y,rect_.width,rect_.height,0);
 
     // Draw Icon
     sprite->drawRoundRect(rect_.x+(CELL_SIZE - ICON_SIZE)/2,rect_.y+MINIMAL_SPACING,ICON_SIZE,ICON_SIZE,5,0);

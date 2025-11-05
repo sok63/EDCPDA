@@ -36,9 +36,10 @@ bool ApplicationManager::isAppRunning() const
 
 void ApplicationManager::update()
 {
-  // Update header part
-
-  // Update application part
+  // FIXME: deltatime != 0
+  applicationRegistry_->getHeaderApplication()->update(0);
+  applicationRegistry_->getApplication(currentApp_)->update(0);
+  
 }
 
 void ApplicationManager::render()
