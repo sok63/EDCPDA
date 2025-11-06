@@ -35,7 +35,6 @@ private:
     
     size_t currentApp_ = 0;
     
-    
     AppState currentAppState_;
     
     uint32_t lastUpdateTime_;

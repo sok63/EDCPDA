@@ -87,8 +87,16 @@ void PaperS3DisplayHAL::applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x
     auto canvas = ((PaperS3DisplaySpriteHAL*) sprite)->get_canvas();
     if(!canvas) return;
 
-    if(!transparent_) canvas->pushSprite(x,y);
-    else canvas->pushSprite(x,y,TFT_TRANSPARENT); 
+    canvas->pushSprite(x,y);
+}
+
+void PaperS3DisplayHAL::applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y, uint32_t transparent_color)
+{
+    if(!sprite) return;
+    auto canvas = ((PaperS3DisplaySpriteHAL*) sprite)->get_canvas();
+    if(!canvas) return;
+
+    canvas->pushSprite(x,y,transparent_color); 
 }
 
 M5Canvas *PaperS3DisplayHAL::getNewCanvas(uint32_t width, uint32_t height, uint32_t bpp)

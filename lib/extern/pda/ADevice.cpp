@@ -40,6 +40,11 @@ void ADevice::setDisplayHAL(ADisplayHAL *displayHAL)
     displayHAL_ = displayHAL;
 }
 
+void ADevice::setLVRenderHAL(ALVRenderHAL *lvrenderHAL)
+{
+    lvrenderHAL_ = lvrenderHAL;
+}
+
 void ADevice::setTouchHAL(ATouchHAL *touchHAL)
 {
     touchHAL_ = touchHAL;
@@ -63,6 +68,11 @@ void ADevice::setPowerHAL(APowerHAL *powerHAL)
 ADisplayHAL *ADevice::getDisplayHAL()
 {
     return displayHAL_;
+}
+
+ALVRenderHAL *ADevice::getLVRenderHAL()
+{
+    return lvrenderHAL_;
 }
 
 ATouchHAL *ADevice::getTouchHAL()

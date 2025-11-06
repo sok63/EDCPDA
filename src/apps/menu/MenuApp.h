@@ -3,6 +3,7 @@
 #include <pda/ApplicationManager.h>
 
 #define MINIMAL_SPACING 10
+#define HEADER_SPACING 30
 
 #define CELLS_IN_ROW 4
 #define CELLS_IN_COLUMN 7
@@ -40,8 +41,7 @@ public:
     void render() override;
     
     const char* getName() const override;
-    const char* getDescription() const override;
-    const uint8_t* getIcon() const override;
+    void drawIconTo(ADisplaySpriteHAL*) override; 
     
     bool onEvent(const Event& event) override;
 
@@ -62,8 +62,7 @@ private:
     ApplicationContext* context_;
     ApplicationManager* appManager_;
     
-
-
+    ADisplaySpriteHAL* icon_;
     CellRectInfo rect_;
 
     size_t selectedIndex_ = 0;

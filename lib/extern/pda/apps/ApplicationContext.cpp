@@ -1,7 +1,7 @@
 #include "ApplicationContext.h"
 
-ApplicationContext::ApplicationContext(ADisplayHAL *display, ATouchHAL *touch, AStorageHAL *storage, ARTCHAL *rtc, APowerHAL *power, EventService *eventService, ConfigService *configService, TimerService *timerService):
-  display_(display), touch_(touch), storage_(storage), rtc_(rtc), power_(power), eventService_(eventService), configService_(configService), timerService_(timerService) 
+ApplicationContext::ApplicationContext(ADisplayHAL *display, ALVRenderHAL *render, ATouchHAL *touch, AStorageHAL *storage, ARTCHAL *rtc, APowerHAL *power, EventService *eventService, ConfigService *configService, TimerService *timerService):
+  display_(display), render_(render), touch_(touch), storage_(storage), rtc_(rtc), power_(power), eventService_(eventService), configService_(configService), timerService_(timerService) 
 {
 }
 
@@ -13,6 +13,11 @@ void ApplicationContext::setApplicationSprite(ADisplaySpriteHAL *sprite)
 ADisplayHAL *ApplicationContext::getDisplay() const
 {
     return display_;
+}
+
+ALVRenderHAL *ApplicationContext::getRender() const
+{
+    return render_;
 }
 
 ADisplaySpriteHAL *ApplicationContext::getApplicationSprite() const

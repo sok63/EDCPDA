@@ -7,6 +7,7 @@
 MenuApp::MenuApp(ApplicationContext *context, ApplicationManager *appManager): context_(context), appManager_(appManager)
 {
    context_->getEventService()->addListener(this);
+   icon_ = context_->getDisplay()->getNewSprite(80,80,4);
 }
 
 void MenuApp::update(uint32_t deltaTime)
@@ -17,7 +18,7 @@ void MenuApp::render()
 {
     auto sprite = context_->getApplicationSprite();
     sprite->clear();
-
+    context_->getDisplay()->applySpriteToScreen(context_->getApplicationSprite(),0,29);
     // TEMPORARY: Draw cell grid
     // for(auto idx=0;idx<=32;idx++){
     //     calculateCellRect(idx);
@@ -29,6 +30,7 @@ void MenuApp::render()
 
     // [2:19] Application blocks
     drawAppAtCell(1,2);
+
     drawAppAtCell(2,3);
     
     
@@ -37,7 +39,7 @@ void MenuApp::render()
     // [24:27] Fast access area
     
     // Set it here for now
-    context_->getDisplay()->applySpriteToScreen(context_->getApplicationSprite(),0,29);
+    context_->getDisplay()->applySpriteToScreen(context_->getApplicationSprite(),0,29, TFT_WHITE);
 }
 
 const char *MenuApp::getName() const
@@ -45,14 +47,8 @@ const char *MenuApp::getName() const
     return "Menu";
 }
 
-const char *MenuApp::getDescription() const
+void MenuApp::drawIconTo(ADisplaySpriteHAL *)
 {
-    return "Application Launcher";
-}
-
-const uint8_t *MenuApp::getIcon() const
-{
-    return nullptr;
 }
 
 bool MenuApp::onEvent(const Event &event)
@@ -187,14 +183,18 @@ void MenuApp::drawFastAccessBlock()
 void MenuApp::drawAppAtCell(uint32_t appNum, uint32_t position)
 {
     auto sprite = context_->getApplicationSprite();
+    auto app = appManager_->getApplicationRegistry()->getApplication(appNum);
+
     // Calculate CellRectInfo
     calculateCellRect(position);
 
     // Draw Icon
+    icon_->clear();
     sprite->drawRoundRect(rect_.x+(CELL_SIZE - ICON_SIZE)/2,rect_.y+MINIMAL_SPACING,ICON_SIZE,ICON_SIZE,5,0);
+    app->drawIconTo(icon_);  
+    context_->getDisplay()->applySpriteToScreen(icon_,rect_.x+(CELL_SIZE - ICON_SIZE)/2,HEADER_SPACING+rect_.y+MINIMAL_SPACING);
 
     // Draw App name
-    auto app = appManager_->getApplicationRegistry()->getApplication(appNum);
     uint32_t text_width = sprite->getTextWidth(app->getName(),2);
     uint32_t text_height = sprite->getTextHeight(app->getName(),2);
     sprite->drawText(rect_.x + (rect_.width - text_width)/2,rect_.y+CELL_SIZE- text_height,app->getName(),0,2);

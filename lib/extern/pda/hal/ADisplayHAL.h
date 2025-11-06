@@ -22,5 +22,7 @@ public:
     virtual ADisplaySpriteHAL* getNewSprite(uint32_t width, uint32_t height, uint32_t bpp)  = 0;
 
     virtual void deleteSprite(ADisplaySpriteHAL*) = 0;
+
     virtual void applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y) = 0;
+    virtual void applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y, uint32_t transparent_color) = 0;
 };

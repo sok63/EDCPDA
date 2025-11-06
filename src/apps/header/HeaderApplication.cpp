@@ -42,14 +42,8 @@ const char *HeaderApplication::getName() const
     return nullptr;
 }
 
-const char *HeaderApplication::getDescription() const
+void HeaderApplication::drawIconTo(ADisplaySpriteHAL *)
 {
-    return nullptr;
-}
-
-const uint8_t *HeaderApplication::getIcon() const
-{
-    return nullptr;
 }
 
 bool HeaderApplication::onEvent(const Event &event)

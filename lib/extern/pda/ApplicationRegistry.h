@@ -1,8 +1,8 @@
 #pragma once 
 
-#include <pda/defines.h>
-#include <pda/apps/AApplication.h>
-#include <pda/apps/ApplicationContext.h>
+#include "defines.h"
+#include "apps/AApplication.h"
+#include "apps/ApplicationContext.h"
 
 class ApplicationRegistry {
 public:

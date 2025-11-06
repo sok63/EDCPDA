@@ -1,6 +1,7 @@
 #include "PaperS3.h"
 
 #include "hal/PaperS3DisplayHAL.h"
+#include "hal/PaperS3LVRenderHAL.h"
 #include "hal/PaperS3PowerHAL.h"
 #include "hal/PaperS3RTCHAL.h"
 #include "hal/PaperS3StorageHAL.h"
@@ -14,6 +15,7 @@ void PaperS3::init()
 
 
     setDisplayHAL(new PaperS3DisplayHAL());
+    setLVRenderHAL(new PaperS3LVRenderHAL());
     setTouchHAL(new PaperS3TouchHAL());
     setStorageHAL(new PaperS3StorageHAL());
     setRTCHAL(new PaperS3RTCHAL());
@@ -28,7 +30,7 @@ void PaperS3::init()
     setEventService(new EventService());
 
     setApplicationRegistry(new ApplicationRegistry());
-    setApplicationContext(new ApplicationContext(getDisplayHAL(),getTouchHAL(),getStorageHAL(),getRTCHAL(),getPowerHAL(),getEventService(),getConfigService(),getTimerService()));    
+    setApplicationContext(new ApplicationContext(getDisplayHAL(),getLVRenderHAL(),getTouchHAL(),getStorageHAL(),getRTCHAL(),getPowerHAL(),getEventService(),getConfigService(),getTimerService()));    
     setApplicationManager(new ApplicationManager(getApplicationRegistry(),getApplicationContext()));
 
     // Set default application sprite

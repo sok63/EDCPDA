@@ -1,5 +1,10 @@
 #include "MapsApp.h"
 
+
+MapsApp::MapsApp(ApplicationContext *context, ApplicationManager *appManager): context_(context), appManager_(appManager)
+{
+}
+
 void MapsApp::drawMenu()
 {
 }
@@ -13,23 +18,34 @@ const char *MapsApp::getName() const
     return "Maps";
 }
 
-const char *MapsApp::getDescription() const
+void MapsApp::drawIconTo(ADisplaySpriteHAL *sprite)
 {
-    return "Maps Application"; 
-}
+   auto render = context_->getRender();
 
-const uint8_t *MapsApp::getIcon() const
-{
-    return nullptr;
+   // Vertical lines
+   render->apply_draw_indexed_line(sprite,10,20,10,60,1,0);
+   render->apply_draw_indexed_line(sprite,25,5,25,45,1,0);
+   render->apply_draw_indexed_line(sprite,40,20,40,60,1,0);
+   render->apply_draw_indexed_line(sprite,55,5,55,45,1,0);
+   render->apply_draw_indexed_line(sprite,70,20,70,60,1,0);
+   
+   // Horizontal up part
+   render->apply_draw_indexed_line(sprite,10,20,25,5,1,0);
+   render->apply_draw_indexed_line(sprite,25,5,40,20,1,0);
+   render->apply_draw_indexed_line(sprite,40,20,55,5,1,0);
+   render->apply_draw_indexed_line(sprite,55,5,70,20,1,0);
+
+   // Horizontal down part
+   render->apply_draw_indexed_line(sprite,10,60,25,45,1,0);
+   render->apply_draw_indexed_line(sprite,25,45,40,60,1,0);
+   render->apply_draw_indexed_line(sprite,40,60,55,45,1,0);
+   render->apply_draw_indexed_line(sprite,55,45,70,60,1,0);
+
 }
 
 bool MapsApp::onEvent(const Event &event)
 {
     return false;
-}
-
-MapsApp::MapsApp(ApplicationContext *context, ApplicationManager *appManager)
-{
 }
 
 void MapsApp::update(uint32_t deltaTime)

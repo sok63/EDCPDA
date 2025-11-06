@@ -24,6 +24,7 @@ public:
 
     void deleteSprite(ADisplaySpriteHAL*) override;
     void applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y) override;
+    void applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y, uint32_t transparent_color) override;
 
 private:
      M5Canvas* getNewCanvas(uint32_t width, uint32_t height, uint32_t bpp);

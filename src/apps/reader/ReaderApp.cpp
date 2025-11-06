@@ -17,14 +17,8 @@ const char *ReaderApp::getName() const
     return "Reader";
 }
 
-const char *ReaderApp::getDescription() const
+void ReaderApp::drawIconTo(ADisplaySpriteHAL *)
 {
-    return "Reader application";
-}
-
-const uint8_t *ReaderApp::getIcon() const
-{
-    return nullptr;
 }
 
 bool ReaderApp::onEvent(const Event &event)

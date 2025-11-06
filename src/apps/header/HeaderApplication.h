@@ -14,9 +14,8 @@ public:
     void render() override;
     
     const char* getName() const override;
-    const char* getDescription() const override;
-    const uint8_t* getIcon() const override;
-    
+    void drawIconTo(ADisplaySpriteHAL*) override; 
+
     bool onEvent(const Event& event) override;
 private:
     

@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include <pda/hal/ADisplayHAL.h>
+#include <pda/hal/ADisplaySpriteHAL.h>
 #include <pda/events/EventService.h>
 
 enum class eApplicationState { STOPPED, RUNNING, PAUSED };
@@ -25,9 +26,8 @@ public:
     // App info
     eApplicationState getState();
     virtual const char* getName() const = 0;
-    virtual const char* getDescription() const = 0;
-    virtual const uint8_t* getIcon() const = 0; // 64x64 icon data
-    
+    virtual void drawIconTo(ADisplaySpriteHAL*) = 0; 
+
     // Event handling from IEventListener
     virtual bool onEvent(const Event& event) override = 0;
 
