@@ -10,6 +10,7 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
 - [+] Touch events now can handle in apps
 - [+] Support touch events: tap, doble tap, swipe in four direction, long press, drag.
+- [ ] Special vector image render.
 
 ## Applicaitons
 
@@ -32,6 +33,7 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 - [+] Use CELL grid to place widgets
 - [+] Draw apps at any cell
 - [+] Draw datetime information in 2 merged cell
+- [+] Apps now can draw self icons in full 16 colors.
 
 ### Maps
 
