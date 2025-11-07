@@ -19,9 +19,10 @@ public:
     bool onEvent(const Event& event) override;
 private:
     
-    void drawCollapsedTimeBlock();
-    void drawCollapsedBatteryBlock();
-    void drawCollapsedDebugBlock();
+    void drawTimeBlock();
+    void drawBatteryBlock();
+    void drawHeapBlock();
+    void drawAppNameBlock();
     
 private:
     bool extended_ = false;
@@ -30,7 +31,8 @@ private:
 
     ApplicationContext* context_;
     ApplicationManager* appManager_;
-    
+
+    ADisplaySpriteHAL* sprite_active_ = nullptr;
     ADisplaySpriteHAL* sprite_collapsed_ = nullptr;
     ADisplaySpriteHAL* sprite_extended_ = nullptr;
 

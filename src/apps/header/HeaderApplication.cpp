@@ -18,23 +18,25 @@ void HeaderApplication::update(uint32_t deltaTime)
 void HeaderApplication::render()
 {
     last_redraw_ = millis() / 60000;
-
-    if(extended_){
-        sprite_extended_->clear();
-        sprite_extended_->drawRect(0,0,sprite_extended_->width()-1,sprite_extended_->height()-1,0);
-        context_->getDisplay()->applySpriteToScreen(sprite_extended_,0,0);
-    } else {   
-        sprite_collapsed_->clear();
-        // Draw debug block (delete later)
-        //sprite_collapsed_->drawRect(0,0,sprite_collapsed_->width()-1,sprite_collapsed_->height()-1,0);
     
-        // Draw normal blocks
-        drawCollapsedTimeBlock();
-        drawCollapsedBatteryBlock();
+    // Select sprite
+    sprite_active_ = extended_ ? sprite_extended_:sprite_collapsed_;
 
-        // Set it here for now
-        context_->getDisplay()->applySpriteToScreen(sprite_collapsed_,0,0);
-        }
+    // Clear
+    sprite_active_->clear();
+
+    // Draw universal top blocks 
+    drawTimeBlock();
+    drawBatteryBlock();
+
+    // Draw special blocks
+    drawHeapBlock();
+    drawAppNameBlock();
+
+    // Apply sprite to screen
+    sprite_active_->drawRect(0,0,sprite_collapsed_->width()-1,sprite_collapsed_->height()-1,0);
+    sprite_active_->drawRect(0,0,sprite_active_->width()-1,sprite_active_->height()-1,0);
+    context_->getDisplay()->applySpriteToScreen(sprite_active_,0,0); 
 }
 
 const char *HeaderApplication::getName() const
@@ -48,47 +50,50 @@ void HeaderApplication::drawIconTo(ADisplaySpriteHAL *)
 
 bool HeaderApplication::onEvent(const Event &event)
 {
+
+    bool result = false;
+
     // Process only touch gestures at now
     if(event.type != eEventType::TOUCH_EVENT) return false;
     sTouchEvent *touch = (sTouchEvent*)(&(event.data));
 
-    
-    if(extended_){
-        // Process only swipe down at now
-        if(touch->gesture != eGestureType::ONEF_SWIPE_UP) return false;
-        if(touch->startY > sprite_extended_->height()) return false;
+    // Catch events started from our sprite
+    if((touch->startY)<= sprite_active_->height()) result = true;
+    if(touch->startY > sprite_active_->height()) return result;
 
-        // Process event - change to wide sprite
+    if(extended_){
+        // Process only swipe up 
+        if(touch->gesture != eGestureType::ONEF_SWIPE_UP) return result;
+ 
+        // Process event - change to small sprite
         extended_ = false;
         context_->getDisplay()->setNeedRedraw();
-        Serial.printf("Swipe UP to MENU collapse from (%d, %d) to (%d, %d), delta: (%d, %d)\n", touch->startX, touch->startY, touch->x, touch->y, touch->deltaX, touch->deltaY);
+
         return true;
     } else {
-        // Process only swipe down at now
-        if(touch->gesture != eGestureType::ONEF_SWIPE_DOWN) return false;
-        if(touch->startY > sprite_collapsed_->height()) return false;
+        // Process only swipe down
+        if(touch->gesture != eGestureType::ONEF_SWIPE_DOWN) return result;
         
-        // Process event - change to wide sprite
+        // Process event - change to big sprite
         extended_ = true;
         context_->getDisplay()->setNeedRedraw();
-        Serial.printf("Swipe DOWN to MENU EXTEND from (%d, %d) to (%d, %d), delta: (%d, %d)\n", touch->startX, touch->startY, touch->x, touch->y, touch->deltaX, touch->deltaY);
+        
         return true;
     }
-    return false;
+    return result;
 }
 
-void HeaderApplication::drawCollapsedTimeBlock()
+void HeaderApplication::drawTimeBlock()
 {
     auto dt = context_->getRTC()->getDateTime();
     char timeStr[16];
 
     sprintf(timeStr, "%02d:%02d", dt.hour, dt.minute);
-    uint32_t text_width = sprite_collapsed_->getTextWidth(timeStr,2);
-    uint32_t text_height = sprite_collapsed_->getTextHeight(timeStr,2);
-    sprite_collapsed_->drawText(270  - (text_width)/2,10,timeStr,0,2);
+    uint32_t text_width = sprite_active_->getTextWidth(timeStr,2);
+    sprite_active_->drawText(270  - (text_width)/2,10,timeStr,0,2);
 }
 
-void HeaderApplication::drawCollapsedBatteryBlock()
+void HeaderApplication::drawBatteryBlock()
 {
 
     auto BATTERY_WIDTH = 40;
@@ -99,12 +104,12 @@ void HeaderApplication::drawCollapsedBatteryBlock()
     auto x = 450;
     auto y = 5;
 
-    sprite_collapsed_->drawRect(x, y, BATTERY_WIDTH, BATTERY_HEIGHT, 0);
-    sprite_collapsed_->drawRect(x + BATTERY_WIDTH, y + BATTERY_TIP_OFFSET, BATTERY_TIP_WIDTH, BATTERY_TIP_HEIGHT, 0);
+    sprite_active_->drawRect(x, y, BATTERY_WIDTH, BATTERY_HEIGHT, 0);
+    sprite_active_->drawRect(x + BATTERY_WIDTH, y + BATTERY_TIP_OFFSET, BATTERY_TIP_WIDTH, BATTERY_TIP_HEIGHT, 0);
 
     // Fill battery based on percentage
     for (int i = x; i < x + BATTERY_WIDTH; i++) {
-        sprite_collapsed_->drawLine(i, y, i, y + BATTERY_HEIGHT - 1, 0);
+        sprite_active_->drawLine(i, y, i, y + BATTERY_HEIGHT - 1, 0);
         if ((i - x) * 100.0 / BATTERY_WIDTH > context_->getPower()->getBatteryLevel()) {
             break;
         }
@@ -112,16 +117,20 @@ void HeaderApplication::drawCollapsedBatteryBlock()
 
     // Draw text
     char prcnt[5];
-
     sprintf(prcnt, "%02d", context_->getPower()->getBatteryLevel());
-    uint32_t text_width = sprite_collapsed_->getTextWidth(prcnt,2);
-    uint32_t text_height = sprite_collapsed_->getTextHeight(prcnt,2);
-    sprite_collapsed_->drawText(x + BATTERY_WIDTH + 5,10,prcnt,0,2);
-
+    sprite_active_->drawText(x + BATTERY_WIDTH + 5,10,prcnt,0,2);
 }
 
-void HeaderApplication::drawCollapsedDebugBlock()
+void HeaderApplication::drawHeapBlock()
 {
+    char prcnt[10];
+    sprintf(prcnt, "%02db", ESP.getMaxAllocHeap());
+    sprite_active_->drawText(330 ,10,prcnt,0,2);
+}
 
-    sprite_collapsed_->drawRect(0,0,539,29,0);
+void HeaderApplication::drawAppNameBlock()
+{
+    auto registry = appManager_->getApplicationRegistry();
+
+    sprite_active_->drawText(30 ,10,registry->getApplication(appManager_->getCurrentApplicationNum())->getName(),0,2);
 }

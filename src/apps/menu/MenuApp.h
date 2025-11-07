@@ -32,6 +32,13 @@ struct CellRectInfo {
 };
 
 
+struct CellAppInfo {
+    int8_t app;
+    int8_t row;
+    int8_t column;
+};
+
+
 class MenuApp : public AApplication {
 public:
     MenuApp(ApplicationContext* context, ApplicationManager* appManager);
@@ -62,6 +69,8 @@ private:
     ApplicationContext* context_;
     ApplicationManager* appManager_;
     
+    CellAppInfo apps_[32];
+
     ADisplaySpriteHAL* icon_;
     CellRectInfo rect_;
 

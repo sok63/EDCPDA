@@ -8,6 +8,17 @@ MenuApp::MenuApp(ApplicationContext *context, ApplicationManager *appManager): c
 {
    context_->getEventService()->addListener(this);
    icon_ = context_->getDisplay()->getNewSprite(80,80,4);
+
+   for(auto idx=0;idx<32;idx++){
+    apps_[idx].app = -1;
+    apps_[idx].column = idx / CELLS_IN_ROW;;
+    apps_[idx].row = idx % CELLS_IN_ROW;;
+   }
+
+   apps_[2].app = 1; // Maps
+   apps_[3].app = 2; // Reader
+
+
 }
 
 void MenuApp::update(uint32_t deltaTime)
@@ -28,15 +39,10 @@ void MenuApp::render()
     // [0:1] Time block
     drawDateTimeBlock();
 
-    // [2:19] Application blocks
-    drawAppAtCell(1,2);
-
-    drawAppAtCell(2,3);
-    
-    
-    // [20:23] Slide area
-
-    // [24:27] Fast access area
+    // Application blocks
+    for(auto idx=0;idx<32;idx++){
+        if(apps_[idx].app>=0) drawAppAtCell(apps_[idx].app,idx);
+    }
     
     // Set it here for now
     context_->getDisplay()->applySpriteToScreen(context_->getApplicationSprite(),0,29, TFT_WHITE);
@@ -59,55 +65,33 @@ bool MenuApp::onEvent(const Event &event)
 
     sTouchEvent *touch = (sTouchEvent*)(&(event.data));
 
+    // Start apps only from double tap (to ignore false touching)
 
-        switch (touch->gesture) {
-            case eGestureType::ONEF_TAP:
-                Serial.printf("  Single tap at (%d, %d)\n", touch->x, touch->y);
-                break;
-                
-            case eGestureType::ONEF_DOUBLE_TAP:
-                Serial.printf("  Double tap at (%d, %d)\n", touch->x, touch->y);
-                break;
-                
-            case eGestureType::ONEF_LONG_PRESS:
-                Serial.printf("  Long press at (%d, %d), duration: %lu ms\n", 
-                             touch->x, touch->y, touch->duration);
-                break;
-                
-            case eGestureType::ONEF_SWIPE_UP:
-                Serial.printf("  Swipe UP from (%d, %d) to (%d, %d), delta: (%d, %d)\n",
-                             touch->startX, touch->startY, touch->x, touch->y,
-                             touch->deltaX, touch->deltaY);
-                break;            
-            case eGestureType::ONEF_SWIPE_DOWN:
-                Serial.printf("  Swipe DOWN from (%d, %d) to (%d, %d), delta: (%d, %d)\n",
-                             touch->startX, touch->startY, touch->x, touch->y,
-                             touch->deltaX, touch->deltaY);
-                break;            
-            case eGestureType::ONEF_SWIPE_LEFT:
-                Serial.printf("  Swipe LEFT from (%d, %d) to (%d, %d), delta: (%d, %d)\n",
-                             touch->startX, touch->startY, touch->x, touch->y,
-                             touch->deltaX, touch->deltaY);
-                break;
-            case eGestureType::ONEF_SWIPE_RIGHT:
-                Serial.printf("  Swipe RIGHT from (%d, %d) to (%d, %d), delta: (%d, %d)\n",
-                             touch->startX, touch->startY, touch->x, touch->y,
-                             touch->deltaX, touch->deltaY);
-                break;
-                
-            case eGestureType::ONEF_DRAG_START:
-                Serial.printf("  Drag started at (%d, %d)\n", touch->startX, touch->startY);
-                break;
-                
-            case eGestureType::ONEF_DRAG_END:
-                Serial.printf("  Drag ended at (%d, %d), total delta: (%d, %d), duration: %lu ms\n",
-                             touch->x, touch->y, touch->deltaX, touch->deltaY, touch->duration);
-                break;
-                
-            default:
-                break;
-        }
-   return false;
+    if(touch->gesture != eGestureType::ONEF_DOUBLE_TAP) return true;
+
+
+    // Try to understand cell where touch is detected
+    // Calculate roughly nearest cell
+    int x = (touch->x)/(CELL_SIZE+CELL_SPACING);
+    int y = (touch->y - 30) / (CELL_SIZE+CELL_SPACING);
+
+    // Check with precise
+    calculateCellRect(x,y);
+    if((touch->x < rect_.x) or (touch->x > rect_.x + rect_.width)) return true;
+    if((touch->y < rect_.y) or (touch->y > rect_.y + rect_.height)) return true;
+    
+    auto appPosition= x + y * 4;
+    auto appNum = apps_[appPosition].app;
+
+    // Switch to app
+    Serial.printf("  Double tap at (%d, %d)\n", x, y);
+    
+    if(appNum != -1){
+        appManager_->launchApp(appNum);
+    }
+    
+
+    return true;
 }
 
 void MenuApp::drawMenu()

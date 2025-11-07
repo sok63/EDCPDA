@@ -14,14 +14,19 @@ void ApplicationManager::init()
 
 void ApplicationManager::launchApp(size_t appIndex)
 {
-  auto app = applicationRegistry_->getApplication(appIndex);
-  
+  auto app_prev = applicationRegistry_->getApplication(currentApp_);
+  auto app_next = applicationRegistry_->getApplication(appIndex);
+
   // Stop before start if not stopped
-  if(app->getState() != eApplicationState::STOPPED){
-    app->onStop();
+  if(app_prev->getState() != eApplicationState::STOPPED){
+    app_prev->onStop();
   }
 
-  app->onStart();
+  app_next->onStart();
+  currentApp_ = appIndex;
+  
+  // Set needRedraw flag
+  applicationContext_->getDisplay()->setNeedRedraw();
 }
 
 void ApplicationManager::exitCurrentApp()
@@ -66,6 +71,11 @@ void ApplicationManager::render()
 ApplicationRegistry *ApplicationManager::getApplicationRegistry()
 {
     return applicationRegistry_;
+}
+
+uint32_t ApplicationManager::getCurrentApplicationNum()
+{
+    return currentApp_;
 }
 
 void ApplicationManager::transitionApp()

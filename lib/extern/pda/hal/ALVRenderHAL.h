@@ -28,9 +28,18 @@ enum class eLVTypes: uint8_t {
     INDEXED_FILLED_RECT = 54,
     INDEXED_RILLED_ROUND_RECT = 55,
     INDEXED_CIRCLE = 56,
-    INDEXED_FILLED_CIRCLE = 57
-    // NonIndexed types
-    // TODO
+    INDEXED_FILLED_CIRCLE = 57,
+
+    // NonIndexed types (mirrow numering)
+    POINT = 150,
+    LINE = 151,
+    RECT = 152,
+    ROUND_RECT = 153,
+    FILLED_RECT = 154,
+    RILLED_ROUND_RECT = 155,
+    CIRCLE = 156,
+    FILLED_CIRCLE = 157
+
 };
 
 
@@ -41,7 +50,7 @@ public:
   eLVTypes getNextType(uint8_t* data_sequence, uint32_t shift);
   
   // Draw commands
-  virtual void apply_draw_indexed_line(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t x2, uint64_t y2, uint64_t width, uint64_t color) = 0;
+  virtual void apply_draw_indexed_line(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t x2, uint64_t y2, uint64_t width, uint64_t color_index) = 0;
 
 };
 

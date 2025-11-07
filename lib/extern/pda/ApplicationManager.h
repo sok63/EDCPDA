@@ -28,12 +28,13 @@ public:
     void render();
     
     ApplicationRegistry* getApplicationRegistry();
+    uint32_t getCurrentApplicationNum();
 
 private:
     ApplicationRegistry* applicationRegistry_;
     ApplicationContext* applicationContext_;
     
-    size_t currentApp_ = 0;
+    uint32_t currentApp_ = 0;
     
     AppState currentAppState_;
     

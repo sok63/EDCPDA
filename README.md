@@ -2,15 +2,11 @@
 
 Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
-## Core fatures
+## Architecture
 
-- High abstraction layers (HAL/Services/Applications)
+## HAL
 
-## System
-
-- [+] Touch events now can handle in apps
-- [+] Support touch events: tap, doble tap, swipe in four direction, long press, drag.
-- [ ] Special vector image render.
+## Services
 
 ## Applicaitons
 
@@ -18,12 +14,12 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
 - [+] Header is separate 'special' application 
 - [+] Draw time
-- [ ] Can grow to show special buttons
-- [ ] Draw battery text
-- [ ] Draw battery graphically
+- [+] Can grow to show special buttons
+- [+] Draw battery text
+- [+] Draw battery graphically
 - [ ] Draw BT icon
 - [ ] Draw WiFi icon
-- [ ] Draw DEBUG info (free RAM size)
+- [+] Draw DEBUG info (free RAM size)
 
 ### Menu
 
@@ -34,8 +30,15 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 - [+] Draw apps at any cell
 - [+] Draw datetime information in 2 merged cell
 - [+] Apps now can draw self icons in full 16 colors.
+- [+] Apps draw icons using special(in active development) vector graphic format.
 
 ### Maps
+
+- [ ] Work with uSD
+- [ ] Work with WiFi
+- [ ] UI elements
+- [ ] Python converter from popular vector tiles to VL graphic format
+- [ ] Draw vector tiles from SD card
 
 No work on maps at this time
 
