@@ -23,8 +23,6 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
 ### Menu
 
-![ Menu status](screenshots/menu.jpg "Menu status")
-
 - [+] Work with RTC hal API
 - [+] Use CELL grid to place widgets
 - [+] Draw apps at any cell
@@ -39,9 +37,6 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 - [ ] UI elements
 - [ ] Python converter from popular vector tiles to VL graphic format
 - [ ] Draw vector tiles from SD card
-
-No work on maps at this time
-
 
 ### Reader
 

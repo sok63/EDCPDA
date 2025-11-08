@@ -27,5 +27,7 @@ const uint16_t paperS3ColorIndexes[16] = {
 class PaperS3LVRenderHAL: public ALVRenderHAL {
 public:
     void apply_draw_indexed_line(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t x2, uint64_t y2, uint64_t width, uint64_t color_index) override;
-
+    void apply_draw_indexed_rect(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t w, uint64_t h, uint64_t line_width, uint64_t color_index) override;
+    void apply_draw_indexed_circle(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t radius, uint64_t line_width, uint64_t color_index) override;
+    void apply_draw_indexed_text(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, const char* text, uint64_t color_index, uint8_t size) override;
 };

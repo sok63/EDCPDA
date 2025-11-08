@@ -24,6 +24,12 @@ void PaperS3DisplaySpriteHAL::drawRect(int16_t x, int16_t y, int16_t w, int16_t 
     canvas_->drawRect(x,y,w,h);
 }
 
+void PaperS3DisplaySpriteHAL::drawCircle(int16_t x, int16_t y, int16_t r, uint16_t color)
+{
+    canvas_->setColor(color);
+    canvas_->drawCircle(x,y,r);
+}
+
 void PaperS3DisplaySpriteHAL::drawLine(int16_t x, int16_t y, int16_t x2, int16_t y2, uint16_t color)
 {  
     canvas_->setColor(color);

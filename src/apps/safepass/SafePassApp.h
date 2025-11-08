@@ -2,10 +2,10 @@
 #include <pda/apps/ApplicationContext.h>
 #include <pda/ApplicationManager.h>
 
-class MapsApp : public AApplication {
+class SafePassApp : public AApplication {
 public:
-    MapsApp(ApplicationContext* context, ApplicationManager* appManager);
-    virtual ~MapsApp() = default;
+    SafePassApp(ApplicationContext* context, ApplicationManager* appManager);
+    virtual ~SafePassApp() = default;
     
     void update(uint32_t deltaTime) override;
     void render() override;

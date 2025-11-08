@@ -2,10 +2,10 @@
 #include <pda/apps/ApplicationContext.h>
 #include <pda/ApplicationManager.h>
 
-class MapsApp : public AApplication {
+class WeatherApp : public AApplication {
 public:
-    MapsApp(ApplicationContext* context, ApplicationManager* appManager);
-    virtual ~MapsApp() = default;
+    WeatherApp(ApplicationContext* context, ApplicationManager* appManager);
+    virtual ~WeatherApp() = default;
     
     void update(uint32_t deltaTime) override;
     void render() override;

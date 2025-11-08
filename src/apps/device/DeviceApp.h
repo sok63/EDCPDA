@@ -2,10 +2,10 @@
 #include <pda/apps/ApplicationContext.h>
 #include <pda/ApplicationManager.h>
 
-class MapsApp : public AApplication {
+class DeviceApp : public AApplication {
 public:
-    MapsApp(ApplicationContext* context, ApplicationManager* appManager);
-    virtual ~MapsApp() = default;
+    DeviceApp(ApplicationContext* context, ApplicationManager* appManager);
+    virtual ~DeviceApp() = default;
     
     void update(uint32_t deltaTime) override;
     void render() override;

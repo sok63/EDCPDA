@@ -14,11 +14,6 @@ MenuApp::MenuApp(ApplicationContext *context, ApplicationManager *appManager): c
     apps_[idx].column = idx / CELLS_IN_ROW;;
     apps_[idx].row = idx % CELLS_IN_ROW;;
    }
-
-   apps_[2].app = 1; // Maps
-   apps_[3].app = 2; // Reader
-
-
 }
 
 void MenuApp::update(uint32_t deltaTime)
@@ -94,6 +89,11 @@ bool MenuApp::onEvent(const Event &event)
     return true;
 }
 
+void MenuApp::setAppPosition(uint32_t appNum, uint32_t position)
+{
+    apps_[position].app = appNum;
+}
+
 void MenuApp::drawMenu()
 {
 }
@@ -141,8 +141,8 @@ void MenuApp::drawDateTimeBlock()
 
   // Line 2 - Date, Day of the week
   const char* daysOfWeek[] = {
-    "Sunday", "Monday", "Someday", "Someday", 
-    "Someday", "Someday", "Someday"
+    "Sunday", "Monday", "Tuesday", "Wednesday", 
+    "Thursday", "Friday", "Saturday"
   };
 
   char dateStr[64];

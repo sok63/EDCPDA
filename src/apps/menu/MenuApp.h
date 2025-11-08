@@ -52,6 +52,7 @@ public:
     
     bool onEvent(const Event& event) override;
 
+    void setAppPosition(uint32_t appNum, uint32_t position);
 private:
     void drawMenu();
     void handleTouch(int16_t x, int16_t y);

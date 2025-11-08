@@ -5,14 +5,6 @@ MapsApp::MapsApp(ApplicationContext *context, ApplicationManager *appManager): c
 {
 }
 
-void MapsApp::drawMenu()
-{
-}
-
-void MapsApp::handleTouch(int16_t x, int16_t y)
-{
-}
-
 const char *MapsApp::getName() const
 {
     return "Maps";
