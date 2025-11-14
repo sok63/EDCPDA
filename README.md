@@ -2,42 +2,17 @@
 
 Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
-## Architecture
+## Tech Debt
 
-## HAL
+- Rewrite TouchGesture driver (need support TWOF gestures)
+- Rewrite Shuffler and add console app for PC (to not lost all passwords while lose M5 Paper S3)
 
-## Services
 
-## Applicaitons
+## Changes
 
-### Header 
 
-- [+] Header is separate 'special' application 
-- [+] Draw time
-- [+] Can grow to show special buttons
-- [+] Draw battery text
-- [+] Draw battery graphically
-- [ ] Draw BT icon
-- [ ] Draw WiFi icon
-- [+] Draw DEBUG info (free RAM size)
+### Version 0.0.19
 
-### Menu
-
-- [+] Work with RTC hal API
-- [+] Use CELL grid to place widgets
-- [+] Draw apps at any cell
-- [+] Draw datetime information in 2 merged cell
-- [+] Apps now can draw self icons in full 16 colors.
-- [+] Apps draw icons using special(in active development) vector graphic format.
-
-### Maps
-
-- [ ] Work with uSD
-- [ ] Work with WiFi
-- [ ] UI elements
-- [ ] Python converter from popular vector tiles to VL graphic format
-- [ ] Draw vector tiles from SD card
-
-### Reader
-
-No work on reader at this time
+- Start develop Widgets
+- Header is now Widget, not separate Application
+- Password Generator (PassGen) application

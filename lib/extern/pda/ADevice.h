@@ -9,7 +9,7 @@ public:
     virtual ~ADevice() = default;
 
     virtual void init() = 0;
-    void registerApplication(AApplication*);
+    uint16_t registerApplication(AApplication*);
     virtual void launch() =0;
 
     virtual void update() = 0;

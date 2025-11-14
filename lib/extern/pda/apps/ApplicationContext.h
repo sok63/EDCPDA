@@ -18,11 +18,8 @@ public:
                AStorageHAL* storage, ARTCHAL* rtc, APowerHAL* power, EventService* eventService,
                ConfigService* configService, TimerService* timerService);
     
-    void setApplicationSprite(ADisplaySpriteHAL*);
-
     ADisplayHAL* getDisplay() const;
     ALVRenderHAL* getRender() const;
-    ADisplaySpriteHAL* getApplicationSprite() const;
     ATouchHAL* getTouch() const;
     AStorageHAL* getStorage() const;
     ARTCHAL* getRTC() const; 

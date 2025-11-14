@@ -2,6 +2,8 @@
 #include <pda/apps/ApplicationContext.h>
 #include <pda/ApplicationManager.h>
 
+#include "./ui/Header.h"
+
 #define MINIMAL_SPACING 10
 #define HEADER_SPACING 30
 
@@ -77,5 +79,8 @@ private:
 
     size_t selectedIndex_ = 0;
     size_t pageNum_ = 0;
+
+    // Widgets
+    Header w_header_;
 
 };

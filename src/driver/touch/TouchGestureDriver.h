@@ -30,9 +30,9 @@ struct sTouchConfig {
     uint8_t eventQueueSize;        
     
     sTouchConfig() :
-        doubleTapTimeMs(300),
+        doubleTapTimeMs(180),
         longPressTimeMs(500),
-        debounceTimeMs(50),
+        debounceTimeMs(30),
         tapMaxDistance(10),
         doubleTapMaxDistance(80),
         swipeMinDistance(50),

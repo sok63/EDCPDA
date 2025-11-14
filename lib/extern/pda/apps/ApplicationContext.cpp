@@ -5,11 +5,6 @@ ApplicationContext::ApplicationContext(ADisplayHAL *display, ALVRenderHAL *rende
 {
 }
 
-void ApplicationContext::setApplicationSprite(ADisplaySpriteHAL *sprite)
-{
-    application_sprite_ = sprite;
-}
-
 ADisplayHAL *ApplicationContext::getDisplay() const
 {
     return display_;
@@ -18,11 +13,6 @@ ADisplayHAL *ApplicationContext::getDisplay() const
 ALVRenderHAL *ApplicationContext::getRender() const
 {
     return render_;
-}
-
-ADisplaySpriteHAL *ApplicationContext::getApplicationSprite() const
-{
-    return application_sprite_;
 }
 
 ATouchHAL *ApplicationContext::getTouch() const

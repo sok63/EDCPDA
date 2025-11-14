@@ -30,9 +30,9 @@ ApplicationRegistry *ADevice::getApplicationRegistry()
     return applicationRegistry_;
 }
 
-void ADevice::registerApplication(AApplication *application)
+uint16_t ADevice::registerApplication(AApplication *application)
 {
-    getApplicationRegistry()->registerApp(application);
+    return getApplicationRegistry()->registerApp(application);
 }
 
 void ADevice::setDisplayHAL(ADisplayHAL *displayHAL)

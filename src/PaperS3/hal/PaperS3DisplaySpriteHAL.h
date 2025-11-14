@@ -17,11 +17,10 @@ public:
     void drawPixel(int16_t x, int16_t y, uint16_t color) override;
     void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) override;
     void drawCircle(int16_t x, int16_t y, int16_t r, uint16_t color) override;
-
     void drawLine(int16_t x, int16_t y, int16_t x2, int16_t y2, uint16_t color) override;
+    void drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color) override;     
+    void drawFillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) override;
 
-    void drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color) override;
-    
     void drawText(int16_t x, int16_t y, const char* text, uint16_t color, uint8_t size) override;
     uint16_t getTextWidth(const char* text, uint8_t size) override;
     uint16_t getTextHeight(const char* text, uint8_t size) override;

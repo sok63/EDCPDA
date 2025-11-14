@@ -39,6 +39,4 @@ private:
     AppState currentAppState_;
     
     uint32_t lastUpdateTime_;
-    
-    void transitionApp();
 };

@@ -33,9 +33,6 @@ void PaperS3::init()
     setApplicationContext(new ApplicationContext(getDisplayHAL(),getLVRenderHAL(),getTouchHAL(),getStorageHAL(),getRTCHAL(),getPowerHAL(),getEventService(),getConfigService(),getTimerService()));    
     setApplicationManager(new ApplicationManager(getApplicationRegistry(),getApplicationContext()));
 
-    // Set default application sprite
-    getApplicationContext()->setApplicationSprite(getDisplayHAL()->getNewSprite(540,930,1));
-
 }
 
 void PaperS3::launch()

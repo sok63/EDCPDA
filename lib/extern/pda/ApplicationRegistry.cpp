@@ -4,17 +4,12 @@ ApplicationRegistry::ApplicationRegistry()
 {
 }
 
-bool ApplicationRegistry::registerApp(AApplication *application)
+uint16_t ApplicationRegistry::registerApp(AApplication *application)
 {
     apps_[appCount_] = application;
     appCount_+=1;
     application->onCreate();
-    return true;
-}
-
-void ApplicationRegistry::setHeaderApplication(AApplication *applicaiton)
-{
-    header_ = applicaiton;
+    return appCount_ - 1;
 }
 
 size_t ApplicationRegistry::getAppCount() const
@@ -27,9 +22,4 @@ AApplication *ApplicationRegistry::getApplication(size_t index) const
     if(index > appCount_) return nullptr;
     if(index >= LIMIT_MAX_APPS) return nullptr;
     return apps_[index];
-}
-
-AApplication *ApplicationRegistry::getHeaderApplication() const
-{
-    return header_;
 }

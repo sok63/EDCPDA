@@ -46,7 +46,7 @@ void MapsApp::update(uint32_t deltaTime)
 
 void MapsApp::render()
 {
-    auto sprite = context_->getApplicationSprite();
-    sprite->clear();
-    context_->getDisplay()->applySpriteToScreen(context_->getApplicationSprite(),0,29);
+    // auto sprite = context_->getApplicationSprite();
+    // sprite->clear();
+    // context_->getDisplay()->applySpriteToScreen(context_->getApplicationSprite(),0,29);
 }
