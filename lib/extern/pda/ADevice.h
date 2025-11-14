@@ -1,19 +1,20 @@
 #pragma once
 
+#include "hal/ALVRenderHAL.h"
 #include "pda/ApplicationManager.h"
 #include "pda/ApplicationRegistry.h"
-#include "hal/ALVRenderHAL.h"
 
-class ADevice {
+class ADevice
+{
 public:
     virtual ~ADevice() = default;
 
     virtual void init() = 0;
     uint16_t registerApplication(AApplication*);
-    virtual void launch() =0;
+    virtual void launch() = 0;
 
     virtual void update() = 0;
-    virtual void powerOff() =0;
+    virtual void powerOff() = 0;
 
 public:
     void setDisplayHAL(ADisplayHAL*);
@@ -25,15 +26,15 @@ public:
 
     ADisplayHAL* getDisplayHAL();
     ALVRenderHAL* getLVRenderHAL();
-    ATouchHAL*   getTouchHAL();
+    ATouchHAL* getTouchHAL();
     AStorageHAL* getStorageHAL();
-    ARTCHAL*     getRTCHAL();
-    APowerHAL*  getPowerHAL();
-    
+    ARTCHAL* getRTCHAL();
+    APowerHAL* getPowerHAL();
+
     void setEventService(EventService*);
     void setConfigService(ConfigService*);
     void setTimerService(TimerService*);
-    
+
     EventService* getEventService();
     ConfigService* getConfigService();
     TimerService* getTimerService();
@@ -42,23 +43,23 @@ public:
     void setApplicationManager(ApplicationManager*);
     void setApplicationRegistry(ApplicationRegistry*);
 
-    ApplicationContext*  getApplicationContext();
-    ApplicationManager*  getApplicationManager();
+    ApplicationContext* getApplicationContext();
+    ApplicationManager* getApplicationManager();
     ApplicationRegistry* getApplicationRegistry();
 
 protected:
-    ADisplayHAL*  displayHAL_   = nullptr;
+    ADisplayHAL* displayHAL_ = nullptr;
     ALVRenderHAL* lvrenderHAL_ = nullptr;
-    ATouchHAL*    touchHAL_     = nullptr;
-    AStorageHAL*  storageHAL_   = nullptr;
-    ARTCHAL*      rtcHAL_       = nullptr;
-    APowerHAL*    powerHAL_     = nullptr;
+    ATouchHAL* touchHAL_ = nullptr;
+    AStorageHAL* storageHAL_ = nullptr;
+    ARTCHAL* rtcHAL_ = nullptr;
+    APowerHAL* powerHAL_ = nullptr;
 
-    EventService* eventService_   = nullptr;
+    EventService* eventService_ = nullptr;
     ConfigService* configService_ = nullptr;
-    TimerService* timerService_   = nullptr;
+    TimerService* timerService_ = nullptr;
 
-    ApplicationContext*  applicationContext_  = nullptr;
-    ApplicationManager*  applicationManager_  = nullptr;
+    ApplicationContext* applicationContext_ = nullptr;
+    ApplicationManager* applicationManager_ = nullptr;
     ApplicationRegistry* applicationRegistry_ = nullptr;
 };

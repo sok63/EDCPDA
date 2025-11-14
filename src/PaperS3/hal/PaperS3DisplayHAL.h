@@ -1,13 +1,14 @@
-#pragma once 
+#pragma once
 
 #include <pda/hal/ADisplayHAL.h>
 
 #include "PaperS3DisplaySpriteHAL.h"
 
-class PaperS3DisplayHAL: public ADisplayHAL {
+class PaperS3DisplayHAL : public ADisplayHAL
+{
 public:
     virtual ~PaperS3DisplayHAL() = default;
-    
+
     void init() override;
     void beginTransaction() override;
     void endTransaction() override;
@@ -22,8 +23,8 @@ public:
 
     ADisplaySpriteHAL* getNewSprite(uint32_t width, uint32_t height, uint32_t bpp) override;
     void deleteSprite(ADisplaySpriteHAL*) override;
-    void applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y) override;
-    void applySpriteToScreen(ADisplaySpriteHAL *sprite, int32_t x, int32_t y, uint32_t transparent_color) override;
+    void applySpriteToScreen(ADisplaySpriteHAL* sprite, int32_t x, int32_t y) override;
+    void applySpriteToScreen(ADisplaySpriteHAL* sprite, int32_t x, int32_t y, uint32_t transparent_color) override;
 
     // Sprite HAL
     void init(uint16_t width, uint16_t height) override;
@@ -41,7 +42,7 @@ public:
     uint16_t getTextHeight(const char* text, uint8_t size) override;
 
 private:
-     M5Canvas* getNewCanvas(uint32_t width, uint32_t height, uint32_t bpp);
+    M5Canvas* getNewCanvas(uint32_t width, uint32_t height, uint32_t bpp);
 
 private:
     bool need_redraw_ = true;

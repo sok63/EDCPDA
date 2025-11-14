@@ -1,6 +1,7 @@
 #include "AWidget.h"
 
-AWidget::AWidget(sRect size): size_(size)
+AWidget::AWidget(sRect size)
+    : size_(size)
 {
 }
 

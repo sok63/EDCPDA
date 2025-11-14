@@ -4,7 +4,7 @@ TimerService::TimerService()
 {
 }
 
-int TimerService::createTimer(uint32_t interval, bool repeat, TimerCallback callback, void *userData)
+int TimerService::createTimer(uint32_t interval, bool repeat, TimerCallback callback, void* userData)
 {
     return 0;
 }

@@ -1,11 +1,12 @@
-#pragma once 
+#pragma once
 
 #include <cstdint>
 
-class APowerHAL {
+class APowerHAL
+{
 public:
     virtual ~APowerHAL() = default;
-    
+
     virtual void init() = 0;
     virtual uint8_t getBatteryLevel() = 0;
     virtual bool isCharging() = 0;

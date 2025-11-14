@@ -7,35 +7,37 @@
 
 #define EDIT_LIM_SIZE 30
 
-struct Key {
+struct Key
+{
     std::string label;
-    float units; 
+    float units;
 };
 
-
-struct KeyRectInfo {
-   uint32_t x;
-   uint32_t y;
-   uint32_t w;
-   uint32_t h;
+struct KeyRectInfo
+{
+    uint32_t x;
+    uint32_t y;
+    uint32_t w;
+    uint32_t h;
 };
 
-class Keyboard: public AWidget {
+class Keyboard : public AWidget
+{
 public:
     Keyboard();
 
     void update() override;
     void render(ADisplaySpriteHAL* sprite) override;
 
-    bool feed_event(const Event &ev) override;
+    bool feed_event(const Event& ev) override;
 
-    void calc_keyRectInfo(std::vector<Key> &row, uint32_t row_num, uint32_t cidx);
+    void calc_keyRectInfo(std::vector<Key>& row, uint32_t row_num, uint32_t cidx);
     char get_char();
 
 protected:
     char ch_ = '\0';
     bool pressed_ = false;
-    uint32_t  position_;
+    uint32_t position_;
     KeyRectInfo key_rect_info_;
     char text_[EDIT_LIM_SIZE];
 };

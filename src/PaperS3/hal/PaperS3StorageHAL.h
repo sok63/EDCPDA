@@ -1,14 +1,15 @@
-#pragma once 
+#pragma once
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
 #include <pda/hal/AStorageHAL.h>
 
-class PaperS3StorageHAL: public AStorageHAL {
+class PaperS3StorageHAL : public AStorageHAL
+{
 public:
     virtual ~PaperS3StorageHAL() = default;
-    
+
     bool init() override;
     bool exists(const char* path) override;
     bool readFile(const char* path, uint8_t* buffer, size_t* size) override;

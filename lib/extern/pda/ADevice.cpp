@@ -1,126 +1,126 @@
 #include "ADevice.h"
 
-void ADevice::setApplicationContext(ApplicationContext *context)
+void ADevice::setApplicationContext(ApplicationContext* context)
 {
     applicationContext_ = context;
 }
 
-void ADevice::setApplicationManager(ApplicationManager *manager)
+void ADevice::setApplicationManager(ApplicationManager* manager)
 {
     applicationManager_ = manager;
 }
 
-void ADevice::setApplicationRegistry(ApplicationRegistry *registry)
+void ADevice::setApplicationRegistry(ApplicationRegistry* registry)
 {
     applicationRegistry_ = registry;
 }
 
-ApplicationContext *ADevice::getApplicationContext()
+ApplicationContext* ADevice::getApplicationContext()
 {
     return applicationContext_;
 }
 
-ApplicationManager *ADevice::getApplicationManager()
+ApplicationManager* ADevice::getApplicationManager()
 {
     return applicationManager_;
 }
 
-ApplicationRegistry *ADevice::getApplicationRegistry()
+ApplicationRegistry* ADevice::getApplicationRegistry()
 {
     return applicationRegistry_;
 }
 
-uint16_t ADevice::registerApplication(AApplication *application)
+uint16_t ADevice::registerApplication(AApplication* application)
 {
     return getApplicationRegistry()->registerApp(application);
 }
 
-void ADevice::setDisplayHAL(ADisplayHAL *displayHAL)
+void ADevice::setDisplayHAL(ADisplayHAL* displayHAL)
 {
     displayHAL_ = displayHAL;
 }
 
-void ADevice::setLVRenderHAL(ALVRenderHAL *lvrenderHAL)
+void ADevice::setLVRenderHAL(ALVRenderHAL* lvrenderHAL)
 {
     lvrenderHAL_ = lvrenderHAL;
 }
 
-void ADevice::setTouchHAL(ATouchHAL *touchHAL)
+void ADevice::setTouchHAL(ATouchHAL* touchHAL)
 {
     touchHAL_ = touchHAL;
 }
 
-void ADevice::setStorageHAL(AStorageHAL *storageHAL)
+void ADevice::setStorageHAL(AStorageHAL* storageHAL)
 {
     storageHAL_ = storageHAL;
 }
 
-void ADevice::setRTCHAL(ARTCHAL *rtcHAL)
+void ADevice::setRTCHAL(ARTCHAL* rtcHAL)
 {
     rtcHAL_ = rtcHAL;
 }
 
-void ADevice::setPowerHAL(APowerHAL *powerHAL)
+void ADevice::setPowerHAL(APowerHAL* powerHAL)
 {
     powerHAL_ = powerHAL;
 }
 
-ADisplayHAL *ADevice::getDisplayHAL()
+ADisplayHAL* ADevice::getDisplayHAL()
 {
     return displayHAL_;
 }
 
-ALVRenderHAL *ADevice::getLVRenderHAL()
+ALVRenderHAL* ADevice::getLVRenderHAL()
 {
     return lvrenderHAL_;
 }
 
-ATouchHAL *ADevice::getTouchHAL()
+ATouchHAL* ADevice::getTouchHAL()
 {
     return touchHAL_;
 }
 
-AStorageHAL *ADevice::getStorageHAL()
+AStorageHAL* ADevice::getStorageHAL()
 {
     return storageHAL_;
 }
 
-ARTCHAL *ADevice::getRTCHAL()
+ARTCHAL* ADevice::getRTCHAL()
 {
     return rtcHAL_;
 }
 
-APowerHAL *ADevice::getPowerHAL()
+APowerHAL* ADevice::getPowerHAL()
 {
     return powerHAL_;
 }
 
-void ADevice::setEventService(EventService *eventService)
+void ADevice::setEventService(EventService* eventService)
 {
     eventService_ = eventService;
 }
 
-void ADevice::setConfigService(ConfigService *configService)
+void ADevice::setConfigService(ConfigService* configService)
 {
     configService_ = configService;
 }
 
-void ADevice::setTimerService(TimerService *timerService)
+void ADevice::setTimerService(TimerService* timerService)
 {
     timerService_ = timerService;
 }
 
-EventService *ADevice::getEventService()
+EventService* ADevice::getEventService()
 {
     return eventService_;
 }
 
-ConfigService *ADevice::getConfigService()
+ConfigService* ADevice::getConfigService()
 {
     return configService_;
 }
 
-TimerService *ADevice::getTimerService()
+TimerService* ADevice::getTimerService()
 {
     return timerService_;
 }

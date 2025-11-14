@@ -1,8 +1,9 @@
-#pragma once 
+#pragma once
 
 #include <cstdint>
 
-enum class eGestureType : uint8_t {
+enum class eGestureType : uint8_t
+{
     NONE,
     ONEF_TAP,
     ONEF_DOUBLE_TAP,
@@ -19,18 +20,28 @@ enum class eGestureType : uint8_t {
     TWOF_ROTATION
 };
 
-struct sTouchEvent {
+struct sTouchEvent
+{
     eGestureType gesture;
-    int16_t x;          
-    int16_t y;             
-    int16_t startX;         
-    int16_t startY;        
-    int16_t deltaX;       
-    int16_t deltaY;       
-    uint32_t duration;     
-    uint32_t timestamp;   
-    
-    sTouchEvent() : gesture(eGestureType::NONE), x(0), y(0), 
-                    startX(0), startY(0), deltaX(0), deltaY(0),
-                    duration(0), timestamp(0) {}
+    int16_t x;
+    int16_t y;
+    int16_t startX;
+    int16_t startY;
+    int16_t deltaX;
+    int16_t deltaY;
+    uint32_t duration;
+    uint32_t timestamp;
+
+    sTouchEvent()
+        : gesture(eGestureType::NONE)
+        , x(0)
+        , y(0)
+        , startX(0)
+        , startY(0)
+        , deltaX(0)
+        , deltaY(0)
+        , duration(0)
+        , timestamp(0)
+    {
+    }
 };

@@ -1,12 +1,11 @@
-#pragma once 
+#pragma once
 
 #include <M5Unified.h>
 
 #include <pda/ADevice.h>
 
-
-
-class PaperS3: public ADevice {
+class PaperS3 : public ADevice
+{
 public:
     void init() override;
     void launch() override;

@@ -1,6 +1,6 @@
+#include <pda/ApplicationManager.h>
 #include <pda/apps/AApplication.h>
 #include <pda/apps/ApplicationContext.h>
-#include <pda/ApplicationManager.h>
 
 #include "./ui/Header.h"
 
@@ -15,14 +15,14 @@
 
 #define ICON_SIZE 80
 
-
-struct Position {
+struct Position
+{
     int x;
     int y;
 };
 
-
-struct CellRectInfo {
+struct CellRectInfo
+{
     uint32_t idx;
     uint32_t column;
     uint32_t row;
@@ -33,35 +33,36 @@ struct CellRectInfo {
     uint32_t y;
 };
 
-
-struct CellAppInfo {
+struct CellAppInfo
+{
     int8_t app;
     int8_t row;
     int8_t column;
 };
 
-
-class MenuApp : public AApplication {
+class MenuApp : public AApplication
+{
 public:
     MenuApp(ApplicationContext* context, ApplicationManager* appManager);
     virtual ~MenuApp() = default;
-    
+
     void update(uint32_t deltaTime) override;
     void render() override;
-    
+
     const char* getName() const override;
-    void drawIconTo(ADisplaySpriteHAL*) override; 
-    
+    void drawIconTo(ADisplaySpriteHAL*) override;
+
     bool onEvent(const Event& event) override;
 
     void setAppPosition(uint32_t appNum, uint32_t position);
+
 private:
     void drawMenu();
     void handleTouch(int16_t x, int16_t y);
-    
+
     void calculateCellRect(uint32_t position);
     void calculateCellRect(uint32_t row, uint32_t column);
-    
+
     // Draw widgets section
     void drawDateTimeBlock();
     void drawSliderBlock();
@@ -71,7 +72,7 @@ private:
 private:
     ApplicationContext* context_;
     ApplicationManager* appManager_;
-    
+
     CellAppInfo apps_[32];
 
     ADisplaySpriteHAL* icon_;
@@ -82,5 +83,4 @@ private:
 
     // Widgets
     Header w_header_;
-
 };

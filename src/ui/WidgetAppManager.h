@@ -1,18 +1,19 @@
-#pragma once 
+#pragma once
 
 #include <list>
 
 #include "AWidget.h"
 
-class WidgetAppManager {
+class WidgetAppManager
+{
 public:
-  std::list<AWidget*>* listnersList();
-  std::list<AWidget*>* renderList();
+    std::list<AWidget*>* listnersList();
+    std::list<AWidget*>* renderList();
 
-  void push_back(AWidget*);
-  void push_front(AWidget*);
+    void push_back(AWidget*);
+    void push_front(AWidget*);
 
 private:
-  std::list<AWidget*> w_event_listners_;
-  std::list<AWidget*> w_render_;
+    std::list<AWidget*> w_event_listners_;
+    std::list<AWidget*> w_render_;
 };

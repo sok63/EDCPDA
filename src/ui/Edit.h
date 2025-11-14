@@ -6,14 +6,15 @@
 
 #define EDIT_LIM_SIZE 30
 
-class Edit: public AWidget {
+class Edit : public AWidget
+{
 public:
-    Edit(sRect size, char *text, uint32_t text_size_limit);
+    Edit(sRect size, char* text, uint32_t text_size_limit);
 
     void update() override;
     void render(ADisplaySpriteHAL* sprite) override;
 
-    bool feed_event(const Event &ev) override;
+    bool feed_event(const Event& ev) override;
 
 protected:
     bool pressed_ = false;

@@ -6,7 +6,8 @@
 
 #define EDIT_LIM_SIZE 30
 
-class CharMatrix: public AWidget {
+class CharMatrix : public AWidget
+{
 public:
     CharMatrix(sRect size, char* matrix, uint16_t cols, uint16_t rows);
 

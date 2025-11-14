@@ -2,14 +2,16 @@
 
 #include "ADisplaySpriteHAL.h"
 
-struct Color {
+struct Color
+{
     uint8_t r = 0;
     uint8_t g = 0;
-    uint8_t b = 0 ;
+    uint8_t b = 0;
     uint8_t a = 0;
 };
 
-enum class eLVTypes: uint8_t {
+enum class eLVTypes : uint8_t
+{
     // Special types
     END = 0,
     CONTROL_WORD = 1,
@@ -42,17 +44,16 @@ enum class eLVTypes: uint8_t {
 
 };
 
-
-class ALVRenderHAL {
+class ALVRenderHAL
+{
 public:
-  // Parse commands
-  void renderDataToSprite(ADisplaySpriteHAL*, uint8_t* data_sequence);
-  eLVTypes getNextType(uint8_t* data_sequence, uint32_t shift);
-  
-  // Draw commands
-  virtual void apply_draw_indexed_line(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t x2, uint64_t y2, uint64_t line_width, uint64_t color_index) = 0;
-  virtual void apply_draw_indexed_rect(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t w, uint64_t h, uint64_t line_width, uint64_t color_index) = 0;
-  virtual void apply_draw_indexed_circle(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t radius, uint64_t line_width, uint64_t color_index) = 0;
-  virtual void apply_draw_indexed_text(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, const char* text, uint64_t color_index, uint8_t size) = 0;
-};
+    // Parse commands
+    void renderDataToSprite(ADisplaySpriteHAL*, uint8_t* data_sequence);
+    eLVTypes getNextType(uint8_t* data_sequence, uint32_t shift);
 
+    // Draw commands
+    virtual void apply_draw_indexed_line(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t x2, uint64_t y2, uint64_t line_width, uint64_t color_index) = 0;
+    virtual void apply_draw_indexed_rect(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t w, uint64_t h, uint64_t line_width, uint64_t color_index) = 0;
+    virtual void apply_draw_indexed_circle(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, uint64_t radius, uint64_t line_width, uint64_t color_index) = 0;
+    virtual void apply_draw_indexed_text(ADisplaySpriteHAL* sprite, uint64_t x, uint64_t y, const char* text, uint64_t color_index, uint8_t size) = 0;
+};

@@ -1,12 +1,13 @@
-#pragma once 
+#pragma once
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
-class AStorageHAL {
+class AStorageHAL
+{
 public:
     virtual ~AStorageHAL() = default;
-    
+
     virtual bool init() = 0;
     virtual bool exists(const char* path) = 0;
     virtual bool readFile(const char* path, uint8_t* buffer, size_t* size) = 0;

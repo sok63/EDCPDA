@@ -1,6 +1,8 @@
 #include "SafePassApp.h"
 
-SafePassApp::SafePassApp(ApplicationContext *context, ApplicationManager *appManager): context_(context), appManager_(appManager)
+SafePassApp::SafePassApp(ApplicationContext* context, ApplicationManager* appManager)
+    : context_(context)
+    , appManager_(appManager)
 {
 }
 
@@ -12,18 +14,18 @@ void SafePassApp::render()
 {
 }
 
-const char *SafePassApp::getName() const
+const char* SafePassApp::getName() const
 {
     return "SafePass";
 }
 
-void SafePassApp::drawIconTo(ADisplaySpriteHAL *sprite)
+void SafePassApp::drawIconTo(ADisplaySpriteHAL* sprite)
 {
     auto render = context_->getRender();
-    render->apply_draw_indexed_text(sprite,25,28,"***",0,2);
+    render->apply_draw_indexed_text(sprite, 25, 28, "***", 0, 2);
 }
 
-bool SafePassApp::onEvent(const Event &event)
+bool SafePassApp::onEvent(const Event& event)
 {
     return false;
 }

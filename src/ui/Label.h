@@ -6,7 +6,8 @@
 
 #define EDIT_LIM_SIZE 30
 
-class Label: public AWidget {
+class Label : public AWidget
+{
 public:
     Label(sRect size, std::string text, uint16_t text_size);
 

@@ -9,10 +9,8 @@
 
 void PaperS3::init()
 {
-
     auto cfg = M5.config();
     M5.begin(cfg);
-
 
     setDisplayHAL(new PaperS3DisplayHAL());
     setLVRenderHAL(new PaperS3LVRenderHAL());
@@ -30,9 +28,8 @@ void PaperS3::init()
     setEventService(new EventService());
 
     setApplicationRegistry(new ApplicationRegistry());
-    setApplicationContext(new ApplicationContext(getDisplayHAL(),getLVRenderHAL(),getTouchHAL(),getStorageHAL(),getRTCHAL(),getPowerHAL(),getEventService(),getConfigService(),getTimerService()));    
-    setApplicationManager(new ApplicationManager(getApplicationRegistry(),getApplicationContext()));
-
+    setApplicationContext(new ApplicationContext(getDisplayHAL(), getLVRenderHAL(), getTouchHAL(), getStorageHAL(), getRTCHAL(), getPowerHAL(), getEventService(), getConfigService(), getTimerService()));
+    setApplicationManager(new ApplicationManager(getApplicationRegistry(), getApplicationContext()));
 }
 
 void PaperS3::launch()
@@ -43,25 +40,25 @@ void PaperS3::launch()
 void PaperS3::update()
 {
     M5.update();
-    
+
     // Process touches
     getTouchHAL()->update();
     auto touch = getTouchHAL()->getNext();
-    if (touch.gesture!=eGestureType::NONE) {
+    if (touch.gesture != eGestureType::NONE) {
         Event event;
         event.type = eEventType::TOUCH_EVENT;
-        memcpy(event.data,&touch,sizeof(touch));
+        memcpy(event.data, &touch, sizeof(touch));
         event.timestamp = millis();
         getEventService()->postEvent(event);
     }
-    
+
     // Update services
     getTimerService()->update();
-    
+
     // Update and render app
     getApplicationManager()->update();
     getApplicationManager()->render();
-    
+
     delay(10);
 }
 

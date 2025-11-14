@@ -2,7 +2,10 @@
 
 #include <pda/apps/ApplicationContext.h>
 
-Button::Button(sRect size, std::string text, uint32_t text_size): AWidget(size), text_(text), text_size_(text_size)
+Button::Button(sRect size, std::string text, uint32_t text_size)
+    : AWidget(size)
+    , text_(text)
+    , text_size_(text_size)
 {
 }
 
@@ -10,32 +13,37 @@ void Button::update()
 {
 }
 
-void Button::render(ADisplaySpriteHAL *sprite)
+void Button::render(ADisplaySpriteHAL* sprite)
 {
-    sprite->drawRect(size_.x,size_.y,size_.w,size_.h,0);
+    sprite->drawRect(size_.x, size_.y, size_.w, size_.h, 0);
 
-    auto tw = sprite->getTextWidth(text_.c_str(),text_size_);
-    auto th = sprite->getTextHeight(text_.c_str(),text_size_);
+    auto tw = sprite->getTextWidth(text_.c_str(), text_size_);
+    auto th = sprite->getTextHeight(text_.c_str(), text_size_);
 
-    sprite->drawText(size_.x+size_.w/2-tw/2,size_.y+size_.h/2-th/2,text_.c_str(),0,text_size_);
+    sprite->drawText(size_.x + size_.w / 2 - tw / 2, size_.y + size_.h / 2 - th / 2, text_.c_str(), 0, text_size_);
 }
 
-bool Button::feed_event(const Event &event)
+bool Button::feed_event(const Event& event)
 {
 
-    if(event.type != eEventType::TOUCH_EVENT) return false;
-    
-    sTouchEvent *touch = (sTouchEvent*)(&(event.data));
-    if((touch->gesture != eGestureType::ONEF_TAP) and (touch->gesture != eGestureType::ONEF_DOUBLE_TAP)) return false;
+    if (event.type != eEventType::TOUCH_EVENT)
+        return false;
 
-    if(touch->x < size_.x) return false;
-    if(touch->x > size_.x + size_.w) return false;
-    if(touch->y < size_.y) return false;
-    if(touch->y > size_.y + size_.h) return false;
+    sTouchEvent* touch = (sTouchEvent*) (&(event.data));
+    if ((touch->gesture != eGestureType::ONEF_TAP) and (touch->gesture != eGestureType::ONEF_DOUBLE_TAP))
+        return false;
+
+    if (touch->x < size_.x)
+        return false;
+    if (touch->x > size_.x + size_.w)
+        return false;
+    if (touch->y < size_.y)
+        return false;
+    if (touch->y > size_.y + size_.h)
+        return false;
 
     pressed_ = true;
     return true;
-
 
     return false;
 }

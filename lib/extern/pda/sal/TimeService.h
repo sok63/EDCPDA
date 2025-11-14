@@ -1,11 +1,12 @@
-#pragma once 
+#pragma once
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
-using TimerCallback = void(*)(void* userData);
+using TimerCallback = void (*)(void* userData);
 
-struct Timer {
+struct Timer
+{
     uint32_t interval;
     uint32_t lastTrigger;
     bool repeat;
@@ -14,11 +15,11 @@ struct Timer {
     void* userData;
 };
 
-
-class TimerService {
+class TimerService
+{
 public:
     TimerService();
-    
+
     int createTimer(uint32_t interval, bool repeat, TimerCallback callback, void* userData);
     void startTimer(int timerId);
     void stopTimer(int timerId);

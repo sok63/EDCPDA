@@ -5,7 +5,8 @@
 
 #include <pda/hal/ADisplaySpriteHAL.h>
 
-class AWidget {
+class AWidget
+{
 public:
     AWidget(sRect size);
     virtual ~AWidget() = default;
@@ -13,7 +14,10 @@ public:
     virtual void update() = 0;
     virtual void render(ADisplaySpriteHAL* render_to) = 0;
 
-    virtual bool feed_event(const Event &ev){ return false;};
+    virtual bool feed_event(const Event& ev)
+    {
+        return false;
+    };
 
     bool take_dirty_flag();
     void set_dirty_flag();

@@ -1,8 +1,9 @@
-#pragma once 
+#pragma once
 
 #include <cstdint>
 
-struct DateTime {
+struct DateTime
+{
     uint16_t year;
     uint8_t month;
     uint8_t day;
@@ -12,10 +13,11 @@ struct DateTime {
     uint8_t second;
 };
 
-class ARTCHAL {
+class ARTCHAL
+{
 public:
     virtual ~ARTCHAL() = default;
-    
+
     virtual void init() = 0;
     virtual DateTime getDateTime() = 0;
     virtual void setDateTime(const DateTime& dt) = 0;
