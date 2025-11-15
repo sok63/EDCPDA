@@ -1,10 +1,12 @@
 #include "Header.h"
 
 #include <M5Unified.h>
+#include "./driver/touch/TouchGestureDriver.h"
 
-Header::Header(ApplicationContext* context)
+Header::Header(ApplicationContext* context, ApplicationManager* appManager)
     : AWidget({0, 0, 540, 30})
     , context_(context)
+    , app_manager_(appManager)
 {
 }
 
@@ -14,6 +16,9 @@ void Header::update()
 
 void Header::render(ADisplaySpriteHAL* to)
 {
+    // Clean area
+    to->drawFillRect(0,0,540,26,TFT_WHITE);
+
     char buf[15];
 
     // Draw time
@@ -34,7 +39,22 @@ void Header::render(ADisplaySpriteHAL* to)
     to->drawLine(0, 26, 540, 26, 0);
 }
 
-bool Header::feed_event(const Event& ev)
+bool Header::feed_event(const Event& event)
 {
+    if (event.type != eEventType::TOUCH_EVENT)
+        return false;
+
+    sTouchEvent* touch = (sTouchEvent*) (&(event.data));
+    Serial.println(TouchGestureDriver::getGestureName(touch->gesture));    
+
+
+    if ((touch->gesture != eGestureType::ONEF_SWIPE_DOWN))
+        return false;
+
+    if (check_hit(size_, touch->startX, touch->startY)) {
+        app_manager_->exitCurrentApp();
+        return true;
+    }
+
     return false;
 }

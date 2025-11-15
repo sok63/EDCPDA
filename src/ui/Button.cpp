@@ -1,6 +1,7 @@
 #include "Button.h"
 
 #include <pda/apps/ApplicationContext.h>
+#include <pda/core/TouchPrimitives.h>
 
 Button::Button(sRect size, std::string text, uint32_t text_size)
     : AWidget(size)
@@ -33,17 +34,10 @@ bool Button::feed_event(const Event& event)
     if ((touch->gesture != eGestureType::ONEF_TAP) and (touch->gesture != eGestureType::ONEF_DOUBLE_TAP))
         return false;
 
-    if (touch->x < size_.x)
-        return false;
-    if (touch->x > size_.x + size_.w)
-        return false;
-    if (touch->y < size_.y)
-        return false;
-    if (touch->y > size_.y + size_.h)
-        return false;
-
-    pressed_ = true;
-    return true;
+    if (check_hit(size_, touch->startX, touch->startY)) {
+        pressed_ = true;
+        return true;
+    }
 
     return false;
 }

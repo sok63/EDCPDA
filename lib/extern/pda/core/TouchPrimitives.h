@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CorePrimitives.h"
 #include <cstdint>
 
 enum class eGestureType : uint8_t
@@ -12,23 +13,17 @@ enum class eGestureType : uint8_t
     ONEF_SWIPE_DOWN,
     ONEF_SWIPE_LEFT,
     ONEF_SWIPE_RIGHT,
-    ONEF_DRAG_START,
-    ONEF_DRAG_MOVE,
-    ONEF_DRAG_END,
+    ONEF_DRAG,
     TWOF_ZOOM_IN,
-    TWOF_ZOOM_OUT,
-    TWOF_ROTATION
+    TWOF_ZOOM_OUT
 };
 
 struct sTouchEvent
 {
     eGestureType gesture;
-    int16_t x;
-    int16_t y;
-    int16_t startX;
-    int16_t startY;
-    int16_t deltaX;
-    int16_t deltaY;
+    int16_t x, y;
+    int16_t startX, startY;
+    int16_t deltaX, deltaY;
     uint32_t duration;
     uint32_t timestamp;
 
@@ -45,3 +40,8 @@ struct sTouchEvent
     {
     }
 };
+
+inline bool check_hit(const sRect& r, int x, int y)
+{
+    return (x >= r.x) && (x < r.x + r.w) && (y >= r.y) && (y < r.y + r.h);
+}

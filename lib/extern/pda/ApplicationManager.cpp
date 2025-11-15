@@ -20,14 +20,8 @@ void ApplicationManager::launchApp(size_t appIndex)
     auto app_next = applicationRegistry_->getApplication(appIndex);
 
     // -= Stop previous application =-
-    if (app_prev->getState() != eApplicationState::STOPPED) {
-        app_prev->onStop();
-    }
-
-    applicationContext_->getEventService()->removeListener(app_prev);
-
-    applicationContext_->getDisplay()->clear();
-
+    app_prev->onStop();
+   
     // -= Start new application =-
     app_next->onStart();
     currentApp_ = appIndex;
@@ -38,6 +32,7 @@ void ApplicationManager::launchApp(size_t appIndex)
 
 void ApplicationManager::exitCurrentApp()
 {
+    launchApp(0);
 }
 
 bool ApplicationManager::isAppRunning() const

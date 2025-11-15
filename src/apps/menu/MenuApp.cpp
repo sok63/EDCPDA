@@ -6,9 +6,9 @@
 MenuApp::MenuApp(ApplicationContext* context, ApplicationManager* appManager)
     : context_(context)
     , appManager_(appManager)
-    , w_header_(context)
+    , w_header_(context, appManager)
 {
-    context_->getEventService()->addListener(this);
+
     icon_ = context_->getDisplay()->getNewSprite(80, 80, 4);
 
     for (auto idx = 0; idx < 32; idx++) {
@@ -18,6 +18,16 @@ MenuApp::MenuApp(ApplicationContext* context, ApplicationManager* appManager)
         apps_[idx].row = idx % CELLS_IN_ROW;
         ;
     }
+}
+
+void MenuApp::onStart()
+{
+    context_->getEventService()->addListener(this);
+}
+
+void MenuApp::onStop()
+{
+    context_->getEventService()->removeListener(this);
 }
 
 void MenuApp::update(uint32_t deltaTime)

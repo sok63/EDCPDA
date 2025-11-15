@@ -8,6 +8,7 @@
 #include <pda/apps/ApplicationContext.h>
 
 #include "./ui/Button.h"
+#include "./ui/ToggleButton.h"
 #include "./ui/CharMatrix.h"
 #include "./ui/Edit.h"
 #include "./ui/Header.h"
@@ -19,6 +20,10 @@ class PassGenApp : public AApplication
 public:
     PassGenApp(ApplicationContext* context, ApplicationManager* appManager);
     virtual ~PassGenApp() = default;
+
+    void onStart() override;
+    void onStop() override;
+
 
     void update(uint32_t deltaTime) override;
     void render() override;
@@ -50,15 +55,15 @@ private:
 
     Button w_btn_sw_;
 
-    Button w_btn_chd_;
-    Button w_btn_chb_;
-    Button w_btn_chs_;
-    Button w_btn_chs1_;
+    ToggleButton w_btn_chd_;
+    ToggleButton w_btn_chb_;
+    ToggleButton w_btn_chs_;
+    ToggleButton w_btn_chs1_;
 
-    Button w_btn_chs2_;
-    Button w_btn_chs3_;
-    Button w_btn_chs4_;
-    Button w_btn_chs5_;
+    ToggleButton w_btn_chs2_;
+    ToggleButton w_btn_chs3_;
+    ToggleButton w_btn_chs4_;
+    ToggleButton w_btn_chs5_;
 
     bool is_secret_selected = true;
 };

@@ -3,6 +3,7 @@
 #include <string>
 
 #include <pda/apps/ApplicationContext.h>
+#include <pda/ApplicationManager.h>
 
 #include "AWidget.h"
 
@@ -11,7 +12,7 @@
 class Header : public AWidget
 {
 public:
-    Header(ApplicationContext* context);
+    Header(ApplicationContext* context, ApplicationManager* appManager);
 
     void update() override;
     void render(ADisplaySpriteHAL* sprite) override;
@@ -20,4 +21,5 @@ public:
 
 private:
     ApplicationContext* context_;
+    ApplicationManager* app_manager_;
 };

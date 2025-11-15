@@ -58,13 +58,8 @@ bool Keyboard::feed_event(const Event& event)
             break;
         for (auto idx = 0; idx < key_rows[ridx].size(); idx++) {
             calc_keyRectInfo(key_rows[ridx], ridx, idx);
-            if (touch->x < key_rect_info_.x)
-                continue;
-            if (touch->x > key_rect_info_.x + key_rect_info_.w)
-                continue;
-            if (touch->y < key_rect_info_.y)
-                continue;
-            if (touch->y > key_rect_info_.y + key_rect_info_.h)
+
+            if (!check_hit(key_rect_info_, touch->startX, touch->startY))
                 continue;
 
             ch_ = key_rows[ridx][idx].label[0];

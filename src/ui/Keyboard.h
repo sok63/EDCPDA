@@ -38,6 +38,6 @@ protected:
     char ch_ = '\0';
     bool pressed_ = false;
     uint32_t position_;
-    KeyRectInfo key_rect_info_;
+    sRect key_rect_info_;
     char text_[EDIT_LIM_SIZE];
 };

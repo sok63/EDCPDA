@@ -1,66 +1,43 @@
 #pragma once
 
 #include <cstdint>
-
+#include <deque>
+#include <array>
+#include <cmath>
+#include <limits>
 #include <pda/core/TouchPrimitives.h>
 
 struct sTouchInput
 {
-    int16_t x;
-    int16_t y;
-    bool isPressed;
-    bool justPressed;
-    bool justReleased;
-    uint32_t timestamp;
-
-    sTouchInput()
-        : x(0)
-        , y(0)
-        , isPressed(false)
-        , justPressed(false)
-        , justReleased(false)
-        , timestamp(0)
-    {
-    }
+    uint8_t n = 0;
+    int16_t x = 0;
+    int16_t y = 0;
+    bool isPressed = false;
+    bool justPressed = false;
+    bool justReleased = false;
+    uint32_t timestamp = 0;
 };
 
 struct sTouchConfig
 {
-    uint32_t doubleTapTimeMs;
-    uint32_t longPressTimeMs;
-    uint32_t debounceTimeMs;
-    uint32_t swipeMaxTimeMs;
-    int16_t tapMaxDistance;
-    int16_t doubleTapMaxDistance;
-    int16_t swipeMinDistance;
-    int16_t dragMinDistance;
-    uint8_t eventQueueSize;
-
-    sTouchConfig()
-        : doubleTapTimeMs(180)
-        , longPressTimeMs(500)
-        , debounceTimeMs(30)
-        , tapMaxDistance(10)
-        , doubleTapMaxDistance(80)
-        , swipeMinDistance(50)
-        , swipeMaxTimeMs(400)
-        , dragMinDistance(15)
-        , eventQueueSize(8)
-    {
-    }
+    uint32_t longPressTimeMs = 500;
+    uint32_t debounceTimeMs = 30;
+    uint32_t swipeMaxTimeMs = 400;
+    int16_t tapMaxDistance = 20;
+    int16_t swipeMinDistance = 50;
+    int16_t dragMinDistance = 15;
+    uint8_t eventQueueSize = 8;
 };
 
 class TouchGestureDriver
 {
 public:
-    TouchGestureDriver(const sTouchConfig& config = sTouchConfig());
+    explicit TouchGestureDriver(const sTouchConfig& config = sTouchConfig());
     ~TouchGestureDriver();
 
     void update(const sTouchInput& input);
-
     bool getNextEvent(sTouchEvent& event);
     bool hasEvents() const;
-    void reset();
 
     void setConfig(const sTouchConfig& config);
     const sTouchConfig& getConfig() const;
@@ -68,76 +45,80 @@ public:
     static const char* getGestureName(eGestureType gesture);
 
 private:
-    struct TouchPoint
-    {
-        int16_t x;
-        int16_t y;
-        uint32_t timestamp;
-        bool valid;
-
-        TouchPoint()
-            : x(0)
-            , y(0)
-            , timestamp(0)
-            , valid(false)
-        {
-        }
-
-        void set(int16_t _x, int16_t _y, uint32_t _timestamp)
-        {
-            x = _x;
-            y = _y;
-            timestamp = _timestamp;
-            valid = true;
-        }
-
-        void invalidate()
-        {
-            valid = false;
-        }
-
-        int16_t distanceTo(const TouchPoint& other) const;
+    struct FingerTrack {
+        bool active = false;
+        int internalId = -1;
+        uint8_t extId = 0;
+        int16_t startX = 0, startY = 0;
+        int16_t lastX = 0, lastY = 0;
+        uint32_t startTime = 0;
+        uint32_t lastTime = 0;
+        bool everMoved = false;
+        int16_t maxDx = 0, maxDy = 0;
+        bool cancelledSingle = false;
     };
 
-    enum class eTouchState : uint8_t
-    {
-        IDLE,
-        TOUCH_DOWN,
-        WAITING_FOR_LONG_PRESS,
-        LONG_PRESS_DETECTED,
-        DRAGGING,
-        TOUCH_RELEASED
+    struct PendingTap {
+        bool pending = false;
+        int16_t x = 0, y = 0;
+        int16_t startX = 0, startY = 0;
+        uint32_t releaseTime = 0;
+        uint32_t startTime = 0;
+        uint32_t expireAt = 0;
+        uint32_t duration = 0;
     };
 
-    sTouchConfig config_;
+    // Очередь событий
+    void enqueue(const sTouchEvent& ev);
 
-    eTouchState state_;
-    TouchPoint touchStart_;
-    TouchPoint touchCurrent_;
-    TouchPoint lastTap_;
-    TouchPoint lastDragReport_;
-    uint32_t lastTapTime_;
-    uint32_t lastEventTime_;
-    bool waitingForSecondTap_;
-    bool longPressReported_;
-    bool dragStartReported_;
+    // Отслеживание пальцев и устойчивость к смене extId
+    int  acquireTrack(uint8_t extId, int16_t x, int16_t y, uint32_t ts, bool forceNew);
+    int  findTrackByExt(uint8_t extId) const;
+    int  rebindToNearest(uint8_t extId, int16_t x, int16_t y);
+    void releaseTrack(int idx, uint32_t ts);
+    int  activeCount() const;
 
-    sTouchEvent* eventQueue_;
-    uint8_t queueHead_;
-    uint8_t queueTail_;
-    uint8_t queueCount_;
+    // Управление конфликтами жестов
+    void markAllSingleCancelled(); // не включает мультитач-флаги!
+    void onSingleReleasedAndClassify(const FingerTrack& f, uint32_t ts);
+    void onMultiReleasedAndClassify(uint32_t ts);
+    void flushPendingByTime(uint32_t nowTs);
 
-    void handleTouchDown(const sTouchInput& input);
-    void handleTouchHold(const sTouchInput& input);
-    void handleTouchUp(const sTouchInput& input);
+    // Классификация
+    eGestureType classifyOneFinger(const FingerTrack& f, uint32_t ts, sTouchEvent& out) const;
+    eGestureType classifyPinch(sTouchEvent& out) const;
 
-    void pushEvent(const sTouchEvent& event);
-    void clearQueue();
+    // Пинч-метрики
+    void updatePinchMetrics();
+    void resetPinch();
 
-    bool isWithinTapThreshold(const TouchPoint& p1, const TouchPoint& p2) const;
-    bool isWithinDoubleTapThreshold(const TouchPoint& p1, const TouchPoint& p2) const;
+    // Утилиты
+    static int32_t sqr32(int v) { return int32_t(v) * int32_t(v); }
+    static int32_t dist2(int x1, int y1, int x2, int y2) {
+        return sqr32(x1 - x2) + sqr32(y1 - y2);
+    }
+    static int16_t clamp16(int v) {
+        return static_cast<int16_t>(std::max<int>(std::numeric_limits<int16_t>::min(),
+                                                  std::min<int>(std::numeric_limits<int16_t>::max(), v)));
+    }
 
-    eGestureType detectSwipe(const TouchPoint& start, const TouchPoint& end) const;
+private:
+    static constexpr int kMaxTracks = 2;
 
-    void resetState();
+    sTouchConfig cfg_;
+    std::deque<sTouchEvent> q_;
+    std::array<FingerTrack, kMaxTracks> tr_{};
+
+    // Двойной тап (pending)
+    PendingTap pendingTap_{};
+
+    // Пинч
+    bool pinchInitialized_ = false; // база пинча зафиксирована
+    bool pinchHadTwo_ = false;      // в сеансе было 2 пальца
+    int16_t pinchStartCx_ = 0, pinchStartCy_ = 0;
+    int16_t pinchLastCx_ = 0, pinchLastCy_ = 0;
+    int32_t pinchStartDist2_ = 0;
+    int32_t pinchLastDist2_ = 0;
+    uint32_t pinchStartTs_ = 0;
+    uint32_t pinchLastTs_ = 0;
 };

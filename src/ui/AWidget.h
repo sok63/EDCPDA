@@ -2,7 +2,6 @@
 
 #include <pda/core/CorePrimitives.h>
 #include <pda/events/EventService.h>
-
 #include <pda/hal/ADisplaySpriteHAL.h>
 
 class AWidget

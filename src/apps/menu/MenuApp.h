@@ -46,6 +46,9 @@ public:
     MenuApp(ApplicationContext* context, ApplicationManager* appManager);
     virtual ~MenuApp() = default;
 
+    void onStart() override;
+    void onStop() override;
+
     void update(uint32_t deltaTime) override;
     void render() override;
 

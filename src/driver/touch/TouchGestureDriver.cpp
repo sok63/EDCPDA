@@ -1,360 +1,367 @@
 #include "TouchGestureDriver.h"
-#include <cmath>
-#include <cstring>
-
-int16_t TouchGestureDriver::TouchPoint::distanceTo(const TouchPoint& other) const
-{
-    int16_t dx = other.x - x;
-    int16_t dy = other.y - y;
-    return static_cast<int16_t>(sqrt(dx * dx + dy * dy));
-}
 
 TouchGestureDriver::TouchGestureDriver(const sTouchConfig& config)
-    : config_(config)
-    , state_(eTouchState::IDLE)
-    , lastTapTime_(0)
-    , lastEventTime_(0)
-    , waitingForSecondTap_(false)
-    , longPressReported_(false)
-    , dragStartReported_(false)
-    , queueHead_(0)
-    , queueTail_(0)
-    , queueCount_(0)
+    : cfg_(config)
 {
-    eventQueue_ = new sTouchEvent[config_.eventQueueSize];
+    q_.clear();
+    resetPinch();
 }
 
-TouchGestureDriver::~TouchGestureDriver()
-{
-    delete[] eventQueue_;
+TouchGestureDriver::~TouchGestureDriver() = default;
+
+void TouchGestureDriver::setConfig(const sTouchConfig& config) {
+    cfg_ = config;
+    while (q_.size() > cfg_.eventQueueSize && !q_.empty()) q_.pop_front();
 }
 
-void TouchGestureDriver::update(const sTouchInput& input)
-{
-    if (input.justPressed) {
-        handleTouchDown(input);
-    } else if (input.isPressed) {
-        handleTouchHold(input);
-    } else if (input.justReleased) {
-        handleTouchUp(input);
-    } else if (waitingForSecondTap_ && (input.timestamp - lastTapTime_ > config_.doubleTapTimeMs)) {
-        if (lastTap_.valid) {
-            sTouchEvent event;
-            event.gesture = eGestureType::ONEF_TAP;
-            event.x = lastTap_.x;
-            event.y = lastTap_.y;
-            event.startX = lastTap_.x;
-            event.startY = lastTap_.y;
-            event.timestamp = lastTap_.timestamp;
-            pushEvent(event);
+const sTouchConfig& TouchGestureDriver::getConfig() const { return cfg_; }
+
+bool TouchGestureDriver::hasEvents() const { return !q_.empty(); }
+
+bool TouchGestureDriver::getNextEvent(sTouchEvent& event) {
+    if (q_.empty()) return false;
+    event = q_.front();
+    q_.pop_front();
+    return true;
+}
+
+const char* TouchGestureDriver::getGestureName(eGestureType g) {
+    switch (g) {
+        case eGestureType::NONE:             return "NONE";
+        case eGestureType::ONEF_TAP:         return "ONEF_TAP";
+        case eGestureType::ONEF_DOUBLE_TAP:  return "ONEF_DOUBLE_TAP";
+        case eGestureType::ONEF_LONG_PRESS:  return "ONEF_LONG_PRESS";
+        case eGestureType::ONEF_SWIPE_UP:    return "ONEF_SWIPE_UP";
+        case eGestureType::ONEF_SWIPE_DOWN:  return "ONEF_SWIPE_DOWN";
+        case eGestureType::ONEF_SWIPE_LEFT:  return "ONEF_SWIPE_LEFT";
+        case eGestureType::ONEF_SWIPE_RIGHT: return "ONEF_SWIPE_RIGHT";
+        case eGestureType::ONEF_DRAG:        return "ONEF_DRAG";
+        case eGestureType::TWOF_ZOOM_IN:     return "TWOF_ZOOM_IN";
+        case eGestureType::TWOF_ZOOM_OUT:    return "TWOF_ZOOM_OUT";
+        default: return "?";
+    }
+}
+
+void TouchGestureDriver::enqueue(const sTouchEvent& ev) {
+    if (cfg_.eventQueueSize == 0) return;
+    if (q_.size() >= cfg_.eventQueueSize) q_.pop_front();
+    q_.push_back(ev);
+}
+
+int TouchGestureDriver::activeCount() const {
+    int c = 0;
+    for (auto& f : tr_) if (f.active) ++c;
+    return c;
+}
+
+int TouchGestureDriver::findTrackByExt(uint8_t extId) const {
+    for (int i = 0; i < kMaxTracks; ++i) {
+        if (tr_[i].active && tr_[i].extId == extId) return i;
+    }
+    return -1;
+}
+
+int TouchGestureDriver::rebindToNearest(uint8_t extId, int16_t x, int16_t y) {
+    int best = -1;
+    int32_t bestD2 = std::numeric_limits<int32_t>::max();
+    for (int i = 0; i < kMaxTracks; ++i) {
+        if (!tr_[i].active) continue;
+        int32_t d2 = dist2(x, y, tr_[i].lastX, tr_[i].lastY);
+        if (d2 < bestD2) { bestD2 = d2; best = i; }
+    }
+    if (best >= 0) {
+        tr_[best].extId = extId;
+    }
+    return best;
+}
+
+int TouchGestureDriver::acquireTrack(uint8_t extId, int16_t x, int16_t y, uint32_t ts, bool forceNew) {
+    int idx = findTrackByExt(extId);
+    if (idx >= 0) return idx;
+
+    if (!forceNew) {
+        idx = rebindToNearest(extId, x, y);
+        if (idx >= 0) return idx;
+    }
+
+    for (int i = 0; i < kMaxTracks; ++i) {
+        if (!tr_[i].active) {
+            FingerTrack& f = tr_[i];
+            f.active = true;
+            f.internalId = i;
+            f.extId = extId;
+            f.startX = f.lastX = x;
+            f.startY = f.lastY = y;
+            f.startTime = f.lastTime = ts;
+            f.everMoved = false;
+            f.maxDx = f.maxDy = 0;
+            f.cancelledSingle = false;
+            return i;
         }
-        waitingForSecondTap_ = false;
-        lastTap_.invalidate();
     }
+    return rebindToNearest(extId, x, y);
 }
 
-void TouchGestureDriver::handleTouchDown(const sTouchInput& input)
-{
-    if (input.timestamp - lastEventTime_ < config_.debounceTimeMs) {
-        return;
-    }
-
-    state_ = eTouchState::TOUCH_DOWN;
-    touchStart_.set(input.x, input.y, input.timestamp);
-    touchCurrent_ = touchStart_;
-    longPressReported_ = false;
-    dragStartReported_ = false;
-    lastDragReport_ = touchStart_;
-
-    state_ = eTouchState::WAITING_FOR_LONG_PRESS;
+void TouchGestureDriver::releaseTrack(int idx, uint32_t ts) {
+    if (idx < 0 || idx >= kMaxTracks) return;
+    tr_[idx].active = false;
+    tr_[idx].lastTime = ts;
 }
 
-void TouchGestureDriver::handleTouchHold(const sTouchInput& input)
-{
-    touchCurrent_.set(input.x, input.y, input.timestamp);
+void TouchGestureDriver::markAllSingleCancelled() {
+    for (auto& f : tr_) if (f.active) f.cancelledSingle = true;
+    // Важно: не трогать флаги пинча здесь
+}
 
-    uint32_t holdDuration = input.timestamp - touchStart_.timestamp;
-    int16_t distance = touchStart_.distanceTo(touchCurrent_);
+void TouchGestureDriver::resetPinch() {
+    pinchInitialized_ = false;
+    pinchHadTwo_ = false;
+    pinchStartCx_ = pinchStartCy_ = 0;
+    pinchLastCx_ = pinchLastCy_ = 0;
+    pinchStartDist2_ = pinchLastDist2_ = 0;
+    pinchStartTs_ = pinchLastTs_ = 0;
+}
 
-    switch (state_) {
-    case eTouchState::WAITING_FOR_LONG_PRESS:
-        if (holdDuration >= config_.longPressTimeMs && distance < config_.tapMaxDistance) {
-            sTouchEvent event;
-            event.gesture = eGestureType::ONEF_LONG_PRESS;
-            event.x = touchCurrent_.x;
-            event.y = touchCurrent_.y;
-            event.startX = touchStart_.x;
-            event.startY = touchStart_.y;
-            event.duration = holdDuration;
-            event.timestamp = input.timestamp;
-            pushEvent(event);
+void TouchGestureDriver::updatePinchMetrics() {
+    int ids[2]; int k = 0;
+    for (int i = 0; i < kMaxTracks; ++i) if (tr_[i].active) ids[k++] = i;
+    if (k != 2) return;
 
-            state_ = eTouchState::LONG_PRESS_DETECTED;
-            longPressReported_ = true;
-        } else if (distance >= config_.dragMinDistance) {
-            if (holdDuration > config_.swipeMaxTimeMs) {
-                sTouchEvent event;
-                event.gesture = eGestureType::ONEF_DRAG_START;
-                event.x = touchCurrent_.x;
-                event.y = touchCurrent_.y;
-                event.startX = touchStart_.x;
-                event.startY = touchStart_.y;
-                event.deltaX = touchCurrent_.x - touchStart_.x;
-                event.deltaY = touchCurrent_.y - touchStart_.y;
-                event.timestamp = input.timestamp;
-                pushEvent(event);
+    auto& a = tr_[ids[0]];
+    auto& b = tr_[ids[1]];
+    int cx = (int(a.lastX) + int(b.lastX)) / 2;
+    int cy = (int(a.lastY) + int(b.lastY)) / 2;
+    int dx = int(b.lastX) - int(a.lastX);
+    int dy = int(b.lastY) - int(a.lastY);
+    int32_t d2 = dist2(a.lastX, a.lastY, b.lastX, b.lastY);
+    uint32_t ts = std::max(a.lastTime, b.lastTime);
 
-                state_ = eTouchState::DRAGGING;
-                dragStartReported_ = true;
-                lastDragReport_ = touchCurrent_;
+    if (!pinchInitialized_) {
+        pinchInitialized_ = true;
+        pinchHadTwo_ = true;
+        pinchStartCx_ = clamp16(cx);
+        pinchStartCy_ = clamp16(cy);
+        pinchStartDist2_ = d2;
+        pinchStartTs_ = std::min(a.startTime, b.startTime);
+    }
+
+    pinchLastCx_ = clamp16(cx);
+    pinchLastCy_ = clamp16(cy);
+    pinchLastDist2_ = d2;
+    pinchLastTs_ = ts;
+
+    // При появлении второго пальца отменяем одиночные жесты текущих треков
+    markAllSingleCancelled();
+}
+
+eGestureType TouchGestureDriver::classifyPinch(sTouchEvent& out) const {
+    if (!pinchInitialized_) return eGestureType::NONE;
+
+    int64_t delta2 = int64_t(pinchLastDist2_) - int64_t(pinchStartDist2_);
+    int32_t thr2 = sqr32(cfg_.dragMinDistance); // порог в квадрате
+    if (std::llabs(delta2) < thr2) return eGestureType::NONE;
+
+    out.gesture = (delta2 > 0) ? eGestureType::TWOF_ZOOM_IN : eGestureType::TWOF_ZOOM_OUT;
+    out.startX = pinchStartCx_;
+    out.startY = pinchStartCy_;
+    out.x = pinchLastCx_;
+    out.y = pinchLastCy_;
+    out.deltaX = out.x - out.startX;
+    out.deltaY = out.y - out.startY;
+    out.duration = (pinchLastTs_ >= pinchStartTs_) ? (pinchLastTs_ - pinchStartTs_) : 0;
+    out.timestamp = pinchLastTs_;
+    return out.gesture;
+}
+
+eGestureType TouchGestureDriver::classifyOneFinger(const FingerTrack& f, uint32_t ts, sTouchEvent& out) const {
+    uint32_t dur = (ts >= f.startTime) ? (ts - f.startTime) : 0;
+    int dx = int(f.lastX) - int(f.startX);
+    int dy = int(f.lastY) - int(f.startY);
+    int adx = std::abs(dx);
+    int ady = std::abs(dy);
+    int maxAbs = std::max(adx, ady);
+    int manh = adx + ady;
+
+    if (dur < cfg_.debounceTimeMs && maxAbs <= cfg_.tapMaxDistance) {
+        return eGestureType::NONE;
+    }
+
+    if (maxAbs <= cfg_.tapMaxDistance) {
+        out.gesture = (dur >= cfg_.longPressTimeMs) ? eGestureType::ONEF_LONG_PRESS : eGestureType::ONEF_TAP;
+        out.startX = f.startX; out.startY = f.startY;
+        out.x = f.lastX; out.y = f.lastY;
+        out.deltaX = dx; out.deltaY = dy;
+        out.duration = dur;
+        out.timestamp = ts;
+        return out.gesture;
+    }
+
+    if (dur <= cfg_.swipeMaxTimeMs && maxAbs >= cfg_.swipeMinDistance) {
+        out.gesture = (adx >= ady)
+                      ? ((dx >= 0) ? eGestureType::ONEF_SWIPE_RIGHT : eGestureType::ONEF_SWIPE_LEFT)
+                      : ((dy >= 0) ? eGestureType::ONEF_SWIPE_DOWN : eGestureType::ONEF_SWIPE_UP);
+        out.startX = f.startX; out.startY = f.startY;
+        out.x = f.lastX; out.y = f.lastY;
+        out.deltaX = dx; out.deltaY = dy;
+        out.duration = dur;
+        out.timestamp = ts;
+        return out.gesture;
+    }
+
+    if (manh >= cfg_.dragMinDistance) {
+        out.gesture = eGestureType::ONEF_DRAG;
+        out.startX = f.startX; out.startY = f.startY;
+        out.x = f.lastX; out.y = f.lastY;
+        out.deltaX = dx; out.deltaY = dy;
+        out.duration = dur;
+        out.timestamp = ts;
+        return out.gesture;
+    }
+
+    return eGestureType::NONE;
+}
+
+void TouchGestureDriver::onSingleReleasedAndClassify(const FingerTrack& f, uint32_t ts) {
+    if (f.cancelledSingle) return;
+
+    sTouchEvent ev;
+    ev.gesture = eGestureType::NONE;
+    auto g = classifyOneFinger(f, ts, ev);
+
+    if (g == eGestureType::ONEF_TAP) {
+        if (pendingTap_.pending) {
+            bool timeOk = (ts <= pendingTap_.expireAt);
+            int adx = std::abs(int(ev.x) - int(pendingTap_.x));
+            int ady = std::abs(int(ev.y) - int(pendingTap_.y));
+            bool posOk = (std::max(adx, ady) <= cfg_.tapMaxDistance);
+            if (timeOk && posOk) {
+                sTouchEvent d;
+                d.gesture = eGestureType::ONEF_DOUBLE_TAP;
+                d.startX = pendingTap_.startX;
+                d.startY = pendingTap_.startY;
+                d.x = ev.x;
+                d.y = ev.y;
+                d.deltaX = d.x - d.startX;
+                d.deltaY = d.y - d.startY;
+                d.duration = (ts >= pendingTap_.startTime) ? (ts - pendingTap_.startTime) : 0;
+                d.timestamp = ts;
+                enqueue(d);
+                pendingTap_ = PendingTap{};
+                return;
+            } else {
+                sTouchEvent t;
+                t.gesture = eGestureType::ONEF_TAP;
+                t.startX = pendingTap_.startX; t.startY = pendingTap_.startY;
+                t.x = pendingTap_.x; t.y = pendingTap_.y;
+                t.deltaX = t.x - t.startX; t.deltaY = t.y - t.startY;
+                t.duration = pendingTap_.duration;
+                t.timestamp = pendingTap_.releaseTime;
+                enqueue(t);
+                pendingTap_ = PendingTap{};
+                pendingTap_.pending = true;
+                pendingTap_.x = ev.x; pendingTap_.y = ev.y;
+                pendingTap_.startX = ev.startX; pendingTap_.startY = ev.startY;
+                pendingTap_.startTime = f.startTime;
+                pendingTap_.releaseTime = ts;
+                pendingTap_.duration = ev.duration;
+                pendingTap_.expireAt = ts + cfg_.swipeMaxTimeMs;
+                return;
             }
-        }
-        break;
-
-    case eTouchState::DRAGGING: {
-        sTouchEvent event;
-        event.gesture = eGestureType::ONEF_DRAG_MOVE;
-        event.x = touchCurrent_.x;
-        event.y = touchCurrent_.y;
-        event.startX = touchStart_.x;
-        event.startY = touchStart_.y;
-        event.deltaX = touchCurrent_.x - lastDragReport_.x;
-        event.deltaY = touchCurrent_.y - lastDragReport_.y;
-        event.timestamp = input.timestamp;
-        pushEvent(event);
-
-        lastDragReport_ = touchCurrent_;
-    } break;
-
-    case eTouchState::LONG_PRESS_DETECTED:
-        break;
-
-    default:
-        break;
-    }
-}
-
-void TouchGestureDriver::handleTouchUp(const sTouchInput& input)
-{
-    touchCurrent_.set(input.x, input.y, input.timestamp);
-
-    uint32_t touchDuration = input.timestamp - touchStart_.timestamp;
-    int16_t distance = touchStart_.distanceTo(touchCurrent_);
-
-    if (state_ == eTouchState::DRAGGING) {
-        sTouchEvent event;
-        event.gesture = eGestureType::ONEF_DRAG_END;
-        event.x = touchCurrent_.x;
-        event.y = touchCurrent_.y;
-        event.startX = touchStart_.x;
-        event.startY = touchStart_.y;
-        event.deltaX = touchCurrent_.x - touchStart_.x;
-        event.deltaY = touchCurrent_.y - touchStart_.y;
-        event.duration = touchDuration;
-        event.timestamp = input.timestamp;
-        pushEvent(event);
-
-        lastEventTime_ = input.timestamp;
-        resetState();
-        return;
-    }
-
-    if (longPressReported_) {
-        lastEventTime_ = input.timestamp;
-        resetState();
-        return;
-    }
-
-    if (distance >= config_.swipeMinDistance && touchDuration <= config_.swipeMaxTimeMs) {
-
-        eGestureType swipeType = detectSwipe(touchStart_, touchCurrent_);
-        if (swipeType != eGestureType::NONE) {
-            sTouchEvent event;
-            event.gesture = swipeType;
-            event.x = touchCurrent_.x;
-            event.y = touchCurrent_.y;
-            event.startX = touchStart_.x;
-            event.startY = touchStart_.y;
-            event.deltaX = touchCurrent_.x - touchStart_.x;
-            event.deltaY = touchCurrent_.y - touchStart_.y;
-            event.duration = touchDuration;
-            event.timestamp = input.timestamp;
-            pushEvent(event);
-
-            lastEventTime_ = input.timestamp;
-            resetState();
+        } else {
+            pendingTap_.pending = true;
+            pendingTap_.x = ev.x; pendingTap_.y = ev.y;
+            pendingTap_.startX = ev.startX; pendingTap_.startY = ev.startY;
+            pendingTap_.startTime = f.startTime;
+            pendingTap_.releaseTime = ts;
+            pendingTap_.duration = ev.duration;
+            pendingTap_.expireAt = ts + cfg_.swipeMaxTimeMs;
             return;
         }
     }
 
-    if (distance >= config_.dragMinDistance && touchDuration > config_.swipeMaxTimeMs) {
-        lastEventTime_ = input.timestamp;
-        resetState();
+    if (g != eGestureType::NONE) {
+        enqueue(ev);
+    }
+}
+
+void TouchGestureDriver::onMultiReleasedAndClassify(uint32_t /*ts*/) {
+    if (!pinchHadTwo_) return;
+
+    sTouchEvent ev;
+    ev.gesture = eGestureType::NONE;
+    auto g = classifyPinch(ev);
+    if (g != eGestureType::NONE) {
+        enqueue(ev);
+    }
+    resetPinch();
+}
+
+void TouchGestureDriver::flushPendingByTime(uint32_t nowTs) {
+    if (pendingTap_.pending && nowTs > pendingTap_.expireAt) {
+        sTouchEvent t;
+        t.gesture = eGestureType::ONEF_TAP;
+        t.startX = pendingTap_.startX; t.startY = pendingTap_.startY;
+        t.x = pendingTap_.x; t.y = pendingTap_.y;
+        t.deltaX = t.x - t.startX; t.deltaY = t.y - t.startY;
+        t.duration = pendingTap_.duration;
+        t.timestamp = pendingTap_.releaseTime;
+        enqueue(t);
+        pendingTap_ = PendingTap{};
+    }
+}
+
+void TouchGestureDriver::update(const sTouchInput& in) {
+    flushPendingByTime(in.timestamp);
+
+    if (!in.isPressed && !in.justPressed && !in.justReleased) {
         return;
     }
 
-    // Проверка тапа
-    if (distance < config_.tapMaxDistance) {
-        if (waitingForSecondTap_ && lastTap_.valid) {
-            uint32_t timeBetweenTaps = input.timestamp - lastTapTime_;
-            int16_t distanceBetweenTaps = lastTap_.distanceTo(touchCurrent_);
+    int idx = -1;
 
-            if (timeBetweenTaps < config_.doubleTapTimeMs && distanceBetweenTaps < config_.doubleTapMaxDistance) {
-                sTouchEvent event;
-                event.gesture = eGestureType::ONEF_DOUBLE_TAP;
-                event.x = touchCurrent_.x;
-                event.y = touchCurrent_.y;
-                event.startX = touchCurrent_.x;
-                event.startY = touchCurrent_.y;
-                event.timestamp = input.timestamp;
-                pushEvent(event);
+    if (in.justPressed) {
+        idx = acquireTrack(in.n, in.x, in.y, in.timestamp, /*forceNew*/true);
+        if (activeCount() == 2) {
+            // Сразу обновить метрики пинча и отменить одиночные
+            updatePinchMetrics();
+        }
+    } else {
+        idx = findTrackByExt(in.n);
+        if (idx < 0) {
+            idx = rebindToNearest(in.n, in.x, in.y);
+        }
+        if (idx < 0) return;
+    }
 
-                waitingForSecondTap_ = false;
-                lastTap_.invalidate();
-                lastEventTime_ = input.timestamp;
-                resetState();
-                return;
-            } else {
-                sTouchEvent event;
-                event.gesture = eGestureType::ONEF_TAP;
-                event.x = lastTap_.x;
-                event.y = lastTap_.y;
-                event.startX = lastTap_.x;
-                event.startY = lastTap_.y;
-                event.timestamp = lastTap_.timestamp;
-                pushEvent(event);
+    FingerTrack& f = tr_[idx];
 
-                waitingForSecondTap_ = false;
-            }
+    if (in.isPressed || in.justReleased) {
+        int dx = int(in.x) - int(f.startX);
+        int dy = int(in.y) - int(f.startY);
+        f.maxDx = static_cast<int16_t>(std::max<int>(std::abs(dx), std::abs(f.maxDx)));
+        f.maxDy = static_cast<int16_t>(std::max<int>(std::abs(dy), std::abs(f.maxDy)));
+        f.everMoved = f.everMoved || (std::abs(dx) > 0 || std::abs(dy) > 0);
+        f.lastX = in.x;
+        f.lastY = in.y;
+        f.lastTime = in.timestamp;
+    }
+
+    if (activeCount() == 2) {
+        updatePinchMetrics();
+    }
+
+    if (in.justReleased) {
+        uint32_t ts = in.timestamp;
+        bool wasMulti = pinchHadTwo_;
+        releaseTrack(idx, ts);
+
+        if (!wasMulti && activeCount() == 0) {
+            onSingleReleasedAndClassify(f, ts);
         }
 
-        lastTap_ = touchCurrent_;
-        lastTapTime_ = input.timestamp;
-        waitingForSecondTap_ = true;
+        if (wasMulti && activeCount() == 0) {
+            onMultiReleasedAndClassify(ts);
+            if (pendingTap_.pending) pendingTap_ = PendingTap{};
+        }
     }
-
-    lastEventTime_ = input.timestamp;
-    resetState();
-}
-
-eGestureType TouchGestureDriver::detectSwipe(const TouchPoint& start, const TouchPoint& end) const
-{
-    int16_t dx = end.x - start.x;
-    int16_t dy = end.y - start.y;
-
-    if (abs(dx) > abs(dy)) {
-        return (dx > 0) ? eGestureType::ONEF_SWIPE_RIGHT : eGestureType::ONEF_SWIPE_LEFT;
-    } else {
-        return (dy > 0) ? eGestureType::ONEF_SWIPE_DOWN : eGestureType::ONEF_SWIPE_UP;
-    }
-}
-
-void TouchGestureDriver::pushEvent(const sTouchEvent& event)
-{
-    if (queueCount_ >= config_.eventQueueSize) {
-        queueHead_ = (queueHead_ + 1) % config_.eventQueueSize;
-        queueCount_--;
-    }
-
-    eventQueue_[queueTail_] = event;
-    queueTail_ = (queueTail_ + 1) % config_.eventQueueSize;
-    queueCount_++;
-}
-
-bool TouchGestureDriver::getNextEvent(sTouchEvent& event)
-{
-    if (queueCount_ == 0) {
-        return false;
-    }
-
-    event = eventQueue_[queueHead_];
-    queueHead_ = (queueHead_ + 1) % config_.eventQueueSize;
-    queueCount_--;
-
-    return true;
-}
-
-bool TouchGestureDriver::hasEvents() const
-{
-    return queueCount_ > 0;
-}
-
-void TouchGestureDriver::clearQueue()
-{
-    queueHead_ = 0;
-    queueTail_ = 0;
-    queueCount_ = 0;
-}
-
-void TouchGestureDriver::reset()
-{
-    clearQueue();
-    resetState();
-    lastTap_.invalidate();
-    lastTapTime_ = 0;
-    lastEventTime_ = 0;
-    waitingForSecondTap_ = false;
-}
-
-void TouchGestureDriver::resetState()
-{
-    state_ = eTouchState::IDLE;
-    touchStart_.invalidate();
-    touchCurrent_.invalidate();
-    longPressReported_ = false;
-    dragStartReported_ = false;
-}
-
-void TouchGestureDriver::setConfig(const sTouchConfig& config)
-{
-    if (config.eventQueueSize != config_.eventQueueSize) {
-        delete[] eventQueue_;
-        eventQueue_ = new sTouchEvent[config.eventQueueSize];
-        clearQueue();
-    }
-
-    config_ = config;
-}
-
-const sTouchConfig& TouchGestureDriver::getConfig() const
-{
-    return config_;
-}
-
-const char* TouchGestureDriver::getGestureName(eGestureType gesture)
-{
-    switch (gesture) {
-    case eGestureType::ONEF_TAP:
-        return "Tap";
-    case eGestureType::ONEF_DOUBLE_TAP:
-        return "Double Tap";
-    case eGestureType::ONEF_LONG_PRESS:
-        return "Long Press";
-    case eGestureType::ONEF_SWIPE_UP:
-        return "Swipe Up";
-    case eGestureType::ONEF_SWIPE_DOWN:
-        return "Swipe Down";
-    case eGestureType::ONEF_SWIPE_LEFT:
-        return "Swipe Left";
-    case eGestureType::ONEF_SWIPE_RIGHT:
-        return "Swipe Right";
-    case eGestureType::ONEF_DRAG_START:
-        return "Drag Start";
-    case eGestureType::ONEF_DRAG_MOVE:
-        return "Drag Move";
-    case eGestureType::ONEF_DRAG_END:
-        return "Drag End";
-    default:
-        return "None";
-    }
-}
-
-bool TouchGestureDriver::isWithinTapThreshold(const TouchPoint& p1, const TouchPoint& p2) const
-{
-    return p1.distanceTo(p2) < config_.tapMaxDistance;
-}
-
-bool TouchGestureDriver::isWithinDoubleTapThreshold(const TouchPoint& p1, const TouchPoint& p2) const
-{
-    return p1.distanceTo(p2) < config_.doubleTapMaxDistance;
 }

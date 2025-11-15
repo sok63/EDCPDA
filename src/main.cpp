@@ -52,6 +52,9 @@ void setup()
 
     pda.registerApplication(new PassGenApp(pda.getApplicationContext(), pda.getApplicationManager()));
     menu->setAppPosition(8, 9);
+
+    // Lets correct set app
+    pda.getApplicationManager()->launchApp(0);
 }
 
 void loop()
