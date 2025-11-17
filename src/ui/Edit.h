@@ -9,15 +9,19 @@
 class Edit : public AWidget
 {
 public:
-    Edit(sRect size, char* text, uint32_t text_size_limit);
+    Edit(sRect size, uint32_t text_size_limit);
 
     void update() override;
     void render(ADisplaySpriteHAL* sprite) override;
 
     bool feed_event(const Event& ev) override;
 
+    void set_selection(bool);
+    char* get_text_();
+
 protected:
-    bool pressed_ = false;
+    bool selected_ = false;
     uint32_t text_size_limit_;
+    uint32_t text_pos_ = 0;
     char* text_;
 };

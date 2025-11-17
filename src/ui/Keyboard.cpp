@@ -1,5 +1,6 @@
 #include "Keyboard.h"
 
+#include "M5Unified.h"
 #include <pda/apps/ApplicationContext.h>
 
 static std::vector<Key> row_1 = {
@@ -16,8 +17,9 @@ static std::vector<std::vector<Key>> key_rows = {
     row_2,
     row_3};
 
-Keyboard::Keyboard()
+Keyboard::Keyboard(EventService* event_service)
     : AWidget({0, 600, 540, 360})
+    , event_service_(event_service)
 {
 }
 
@@ -63,6 +65,10 @@ bool Keyboard::feed_event(const Event& event)
                 continue;
 
             ch_ = key_rows[ridx][idx].label[0];
+            post_event();
+            if (touch->gesture == eGestureType::ONEF_DOUBLE_TAP)
+                post_event(); // For double tap double post event
+            Serial.println("post1");
             return true;
         }
     }
@@ -111,4 +117,18 @@ char Keyboard::get_char()
     auto tmp = ch_;
     ch_ = '\0';
     return tmp;
+}
+
+void Keyboard::post_event()
+{
+    if (!event_service_)
+        return;
+
+    Serial.println("post2");
+    Event event;
+    event.type = eEventType::KEY_CHAR_EVENT;
+    event.data[0] = ch_;
+    event.timestamp = millis();
+
+    event_service_->postEvent(event);
 }

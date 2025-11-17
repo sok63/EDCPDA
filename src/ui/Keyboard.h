@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "AWidget.h"
+#include <pda/events/EventService.h>
 
 #define EDIT_LIM_SIZE 30
 
@@ -24,7 +25,7 @@ struct KeyRectInfo
 class Keyboard : public AWidget
 {
 public:
-    Keyboard();
+    Keyboard(EventService* event_service);
 
     void update() override;
     void render(ADisplaySpriteHAL* sprite) override;
@@ -35,9 +36,12 @@ public:
     char get_char();
 
 protected:
+    void post_event();
+
     char ch_ = '\0';
     bool pressed_ = false;
     uint32_t position_;
     sRect key_rect_info_;
     char text_[EDIT_LIM_SIZE];
+    EventService* event_service_ = nullptr;
 };

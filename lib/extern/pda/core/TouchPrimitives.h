@@ -20,25 +20,15 @@ enum class eGestureType : uint8_t
 
 struct sTouchEvent
 {
-    eGestureType gesture;
-    int16_t x, y;
-    int16_t startX, startY;
-    int16_t deltaX, deltaY;
-    uint32_t duration;
-    uint32_t timestamp;
-
-    sTouchEvent()
-        : gesture(eGestureType::NONE)
-        , x(0)
-        , y(0)
-        , startX(0)
-        , startY(0)
-        , deltaX(0)
-        , deltaY(0)
-        , duration(0)
-        , timestamp(0)
-    {
-    }
+    eGestureType gesture = eGestureType::NONE;
+    int16_t x = 0;
+    int16_t y = 0;
+    int16_t startX = 0;
+    int16_t startY = 0;
+    int16_t deltaX = 0;
+    int16_t deltaY = 0;
+    uint32_t duration = 0;
+    uint32_t timestamp = 0;
 };
 
 inline bool check_hit(const sRect& r, int x, int y)

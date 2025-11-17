@@ -23,6 +23,7 @@ MenuApp::MenuApp(ApplicationContext* context, ApplicationManager* appManager)
 void MenuApp::onStart()
 {
     context_->getEventService()->addListener(this);
+    context_->getDisplay()->setNeedRedraw();
 }
 
 void MenuApp::onStop()

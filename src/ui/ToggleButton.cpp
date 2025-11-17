@@ -51,3 +51,8 @@ bool ToggleButton::is_pressed()
 {
     return pressed_;
 }
+
+void ToggleButton::set_pressed()
+{
+    pressed_ = true;
+}

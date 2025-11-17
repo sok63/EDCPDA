@@ -14,6 +14,7 @@ public:
 
     bool feed_event(const Event& ev) override;
     bool is_pressed();
+    void set_pressed();
 
 protected:
     bool pressed_ = false;

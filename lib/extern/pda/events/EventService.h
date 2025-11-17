@@ -8,6 +8,7 @@ enum class eEventType
     UNKNOWN_TYPE,
     TOUCH_EVENT,
     BUTTON_EVENT,
+    KEY_CHAR_EVENT,
     TIMER_EVENT,
     POWER_EVENT,
     APPLICATION_EVENT

@@ -9,6 +9,13 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
 ## Changes
 
+### Version 0.0.21
+
+- Separate thread for M5 Updates (help to detect all touches)
+- Keyboard now generate special event to change logic (work with char at detection moment) 
+- Switch from two full redraw to only one at start (faster starting to menu screen)
+- Update widgets (edit, toogle button, keyboard) to new concepts
+
 ### Version 0.0.20
 
 - Format all code with clang-format

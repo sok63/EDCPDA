@@ -10,6 +10,7 @@
 void PaperS3::init()
 {
     auto cfg = M5.config();
+    cfg.clear_display = false;
     M5.begin(cfg);
 
     setDisplayHAL(new PaperS3DisplayHAL());
@@ -39,10 +40,11 @@ void PaperS3::launch()
 
 void PaperS3::update()
 {
-    M5.update();
+    // M5.update(); // Go to touchhal
 
     // Process touches
     getTouchHAL()->update();
+
     auto touch = getTouchHAL()->getNext();
     if (touch.gesture != eGestureType::NONE) {
         Event event;

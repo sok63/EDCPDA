@@ -8,8 +8,8 @@
 PassGenApp::PassGenApp(ApplicationContext* context, ApplicationManager* appManager)
     : context_(context)
     , appManager_(appManager)
-    , w_edit_site_({110, 585, 300, 40}, (char*) site_str_, 15)
-    , w_edit_secret_({110, 650, 300, 40}, (char*) secret_str_, 15)
+    , w_edit_site_({110, 585, 300, 40}, 15)
+    , w_edit_secret_({110, 650, 300, 40}, 15)
     , w_header_(context, appManager)
     , w_btn_sw_({420, 585, 110, 110}, "SW", 3)
     ,
@@ -24,6 +24,7 @@ PassGenApp::PassGenApp(ApplicationContext* context, ApplicationManager* appManag
     , w_btn_chs3_({335, 540, 60, 40}, "S3", 2)
     , w_btn_chs4_({400, 540, 60, 40}, "S4", 2)
     , w_btn_chs5_({465, 540, 60, 40}, "S5", 2)
+    , w_keyboard_(context->getEventService())
 {
 
     // Special on place case
@@ -47,8 +48,11 @@ PassGenApp::PassGenApp(ApplicationContext* context, ApplicationManager* appManag
     wm_.push_back(&w_btn_chs5_);
     wm_.push_back(&w_keyboard_);
 
-    sprintf(secret_str_, "");
-    sprintf(site_str_, "");
+    w_edit_secret_.set_selection(is_secret_selected);
+    w_btn_chb_.set_pressed();
+    w_btn_chd_.set_pressed();
+    w_btn_chs_.set_pressed();
+    w_btn_chs1_.set_pressed();
 }
 
 void PassGenApp::onStart()
@@ -63,24 +67,11 @@ void PassGenApp::onStop()
 
 void PassGenApp::update(uint32_t deltaTime)
 {
-    // Update keyboard
-    auto ch = w_keyboard_.get_char();
-    if (ch > 0) {
-        if (is_secret_selected) {
-            secret_str_[secret_str_pos_] = ch;
-            secret_str_pos_ += 1;
-            secret_str_[secret_str_pos_] = '\0';
-        } else {
-            site_str_[site_str_pos_] = ch;
-            site_str_pos_ += 1;
-            site_str_[site_str_pos_] = '\0';
-        }
-        context_->getDisplay()->setNeedRedraw();
-    }
-
     // Update buttons
     if (w_btn_sw_.is_pressed()) {
         is_secret_selected = !is_secret_selected;
+        w_edit_secret_.set_selection(is_secret_selected);
+        w_edit_site_.set_selection(!is_secret_selected);
     }
 
     // Check others
@@ -121,7 +112,7 @@ void PassGenApp::render()
     if (config.charset_mask) {
         Shuffler shuffler;
         shuffler.init(config, alphabet_buffer, matrix_);
-        shuffler.shuffle(site_str_, secret_str_);
+        shuffler.shuffle(w_edit_site_.get_text_(), w_edit_secret_.get_text_());
     }
 
     // Now draw result
