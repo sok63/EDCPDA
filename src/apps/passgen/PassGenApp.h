@@ -3,17 +3,17 @@
 #include <string>
 #include <vector>
 
-#include <pda/ApplicationManager.h>
-#include <pda/apps/AApplication.h>
-#include <pda/apps/ApplicationContext.h>
+#include <pda/applications/ApplicationManager.h>
+#include <pda/applications/AApplication.h>
+#include <pda/applications/ApplicationContext.h>
 
-#include "./ui/Button.h"
-#include "./ui/CharMatrix.h"
-#include "./ui/Edit.h"
-#include "./ui/Header.h"
-#include "./ui/Keyboard.h"
-#include "./ui/ToggleButton.h"
-#include "./ui/WidgetAppManager.h"
+#include <pda/ui/widgets/Button.h>
+#include <pda/ui/widgets/CharMatrix.h>
+#include <pda/ui/widgets/Edit.h>
+#include <pda/ui/widgets/Header.h>
+#include <pda/ui/widgets/Keyboard.h>
+#include <pda/ui/widgets/ToggleButton.h>
+#include <pda/ui/widgets/WidgetAppManager.h>
 
 class PassGenApp : public AApplication
 {

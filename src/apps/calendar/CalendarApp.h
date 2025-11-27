@@ -1,6 +1,6 @@
-#include <pda/ApplicationManager.h>
-#include <pda/apps/AApplication.h>
-#include <pda/apps/ApplicationContext.h>
+#include <pda/applications/ApplicationManager.h>
+#include <pda/applications/AApplication.h>
+#include <pda/applications/ApplicationContext.h>
 
 class CalendarApp : public AApplication
 {

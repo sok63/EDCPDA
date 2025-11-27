@@ -1,6 +1,6 @@
 #pragma once
 
-#include <pda/hal/AStorageHAL.h>
+#include <pda/hal/interfaces/AStorageHAL.h>
 
 class ConfigService
 {

@@ -1,9 +1,9 @@
 #include "PassGenApp.h"
 
-#include "M5Unified.h"
+#include <M5Unified.h>
 
-#include "./driver/shuffler/Shuffler.h"
-#include "./ui/Label.h"
+#include <pda/helpers/shuffler/Shuffler.h>
+#include <pda/ui/widgets/Label.h>
 
 PassGenApp::PassGenApp(ApplicationContext* context, ApplicationManager* appManager)
     : context_(context)

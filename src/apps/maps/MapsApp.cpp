@@ -1,9 +1,31 @@
 #include "MapsApp.h"
+#include "M5Unified.h"
+
+#include <pda/helpers/lvf/LVF.h>
 
 MapsApp::MapsApp(ApplicationContext* context, ApplicationManager* appManager)
     : context_(context)
     , appManager_(appManager)
+    , w_header_(context, appManager)
+    , calculator_(540, 960)
+    , w_btn_less_details_({30, 800, 110, 110}, "-", 3)
+    , w_btn_more_details_({400, 800, 110, 110}, "+", 3)
+// , w_map_({0, w_header_.get_size().h, 540, 960 - w_header_.get_size().h}, context, appManager)
 {
+    calculator_.setCenterLatLon(52.53467253, 13.40384033);
+    calculator_.setNewZoom(8.0);
+    calculator_.setNewDetailLevel(13);
+}
+
+void MapsApp::onStart()
+{
+    context_->getEventService()->addListener(this);
+    context_->getDisplay()->setNeedRedraw();
+}
+
+void MapsApp::onStop()
+{
+    context_->getEventService()->removeListener(this);
 }
 
 const char* MapsApp::getName() const
@@ -37,16 +59,92 @@ void MapsApp::drawIconTo(ADisplaySpriteHAL* sprite)
 
 bool MapsApp::onEvent(const Event& event)
 {
+
+    if (event.type != eEventType::TOUCH_EVENT) {
+        return false;
+    }
+
+    if (w_header_.feed_event(event)) {
+        return true;
+    }
+
+    sTouchEvent* touch = (sTouchEvent*) (&(event.data));
+
+    if (w_btn_less_details_.feed_event(event))
+        return true;
+    if (w_btn_more_details_.feed_event(event))
+        return true;
+
+    if ((touch->gesture == eGestureType::ONEF_DRAG) or (touch->gesture == eGestureType::ONEF_SWIPE_DOWN) or (touch->gesture == eGestureType::ONEF_SWIPE_UP) or (touch->gesture == eGestureType::ONEF_SWIPE_LEFT) or (touch->gesture == eGestureType::ONEF_SWIPE_RIGHT)) {
+
+        int32_t pos_x = 540 / 2 - touch->deltaX; // 270
+        int32_t pos_y = 960 / 2 - touch->deltaY; // 480
+
+        Serial.printf("%d %d \n", pos_x, pos_y);
+
+        calculator_.setNewCenterXY(pos_x, pos_y);
+        context_->getDisplay()->setNeedRedraw();
+    }
+
+    if (touch->gesture == eGestureType::ONEF_DOUBLE_TAP) {
+        calculator_.setNewCenterXY(touch->x, touch->y);
+        calculator_.setNewZoom(calculator_.getZoom() / 2.);
+        context_->getDisplay()->setNeedRedraw();
+    }
+
+    if (touch->gesture == eGestureType::ONEF_LONG_PRESS) {
+        calculator_.setNewZoom(calculator_.getZoom() * 2.);
+        context_->getDisplay()->setNeedRedraw();
+    }
+
+    // if (w_map_.feed_event(event)) {
+    //     return true;
+    // }
+
     return false;
 }
 
 void MapsApp::update(uint32_t deltaTime)
 {
+    if (w_header_.take_dirty_flag()) {
+        context_->getDisplay()->setNeedRedraw();
+    }
+    // if (w_map_.take_dirty_flag()) {
+    //     context_->getDisplay()->setNeedRedraw();
+    // }
+
+    if (w_btn_less_details_.is_pressed()) {
+        calculator_.setNewDetailLevel(calculator_.getDetailLevel() - 1);
+        context_->getDisplay()->setNeedRedraw();
+        return;
+    }
+
+    if (w_btn_more_details_.is_pressed()) {
+        calculator_.setNewDetailLevel(calculator_.getDetailLevel() + 1);
+        context_->getDisplay()->setNeedRedraw();
+        return;
+    }
 }
 
 void MapsApp::render()
 {
-    // auto sprite = context_->getApplicationSprite();
-    // sprite->clear();
-    // context_->getDisplay()->applySpriteToScreen(context_->getApplicationSprite(),0,29);
+    Serial.println("DRAW");
+    auto storage = context_->getStorage();
+    auto display = context_->getDisplay();
+
+    // w_map_.render(display);
+
+    MapCalcResult r = calculator_.calculate();
+
+    display->drawFillRect(0, 0, 540, 960, TFT_WHITE);
+    for (auto x = 0; x < r.tilesX; x++) {
+        for (auto y = 0; y < r.tilesY; y++) {
+          
+            LVFG::version_1::LVGFTileWorker::write_tile_to_pos(storage, display, r.tilesZ, r.startTileX + x, r.startTileY + y, r.offsetScreenX + x * r.tilePixelWidth, r.offsetScreenY + y * r.tilePixelHeight, r.tilePixelWidth, r.tilePixelHeight);
+        }
+    }
+
+    w_btn_less_details_.render(display);
+    w_btn_more_details_.render(display);
+    w_header_.render(display);
 }

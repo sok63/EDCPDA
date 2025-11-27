@@ -9,6 +9,15 @@ Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
 ## Changes
 
+### Version 0.0.22
+
+- Project file architcture restructurization
+- Code refactoring
+- Define code style, need to fix all out of style places
+- Map widget & application
+- Tile file parser
+- StorageHAL class for PaperS3
+
 ### Version 0.0.21
 
 - Separate thread for M5 Updates (help to detect all touches)

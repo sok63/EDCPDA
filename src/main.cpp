@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include <PaperS3/PaperS3.h>
+#include <pda/hal/implementations/M5PaperS3/PaperS3.h>
 
 #include "apps/calendar/CalendarApp.h"
 #include "apps/device/DeviceApp.h"

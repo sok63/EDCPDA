@@ -1,8 +1,8 @@
-#include <pda/ApplicationManager.h>
-#include <pda/apps/AApplication.h>
-#include <pda/apps/ApplicationContext.h>
+#include <pda/applications/ApplicationManager.h>
+#include <pda/applications/AApplication.h>
+#include <pda/applications/ApplicationContext.h>
 
-#include "./ui/Header.h"
+#include <pda/ui/widgets/Header.h>
 
 #define MINIMAL_SPACING 10
 #define HEADER_SPACING 30
