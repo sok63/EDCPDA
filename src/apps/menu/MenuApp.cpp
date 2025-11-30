@@ -3,29 +3,33 @@
 
 #include <M5Unified.h>
 
-MenuApp::MenuApp(ApplicationContext* context, ApplicationManager* appManager)
-    : context_(context)
-    , appManager_(appManager)
-    , w_header_(context, appManager)
+#include <pda/core/Kernel.h>
+
+AApplication* MenuApp::createInstance()
 {
-    icon_ = context_->getDisplay()->getNewSprite(80, 80, 4);
+    auto menu = new MenuApp;
+    return new MenuApp;
+}
+
+MenuApp::MenuApp()
+    : w_header_()
+{
+    icon_ = Kernel::getDisplay()->getNewSprite(80, 80, 4);
 
     for (auto idx = 0; idx < 32; idx++) {
         apps_[idx].app = -1;
         apps_[idx].column = idx / CELLS_IN_ROW;
         apps_[idx].row = idx % CELLS_IN_ROW;
     }
-}
 
-void MenuApp::onStart()
-{
-    context_->getEventService()->addListener(this);
-    context_->getDisplay()->setNeedRedraw();
-}
-
-void MenuApp::onStop()
-{
-    context_->getEventService()->removeListener(this);
+    auto position = 2;
+    for (auto idx = 0; idx < Kernel::getApplicationFactory()->count(); idx++) {
+        auto desc = Kernel::getApplicationFactory()->getByIndex(idx);
+        if (desc->drawIcon) {
+            apps_[position].app = desc->id;
+            position++;
+        }
+    }
 }
 
 void MenuApp::update(uint32_t deltaTime)
@@ -33,12 +37,12 @@ void MenuApp::update(uint32_t deltaTime)
     w_header_.update();
 
     if (w_header_.take_dirty_flag())
-        context_->getDisplay()->setNeedRedraw();
+        Kernel::getDisplay()->setNeedRedraw();
 }
 
 void MenuApp::render()
 {
-    auto display = context_->getDisplay();
+    auto display = Kernel::getDisplay();
     display->clear();
 
     w_header_.render(display);
@@ -48,18 +52,9 @@ void MenuApp::render()
 
     // Application blocks
     for (auto idx = 0; idx < 32; idx++) {
-        if (apps_[idx].app >= 0)
+        if (apps_[idx].app > 0)
             drawAppAtCell(apps_[idx].app, idx);
     }
-}
-
-const char* MenuApp::getName() const
-{
-    return "Menu";
-}
-
-void MenuApp::drawIconTo(ADisplaySpriteHAL*)
-{
 }
 
 bool MenuApp::onEvent(const Event& event)
@@ -92,7 +87,7 @@ bool MenuApp::onEvent(const Event& event)
 
     // Switch to app
     if (appNum != -1) {
-        appManager_->launchApp(appNum);
+        Kernel::setApplication(appNum);
     }
 
     return true;
@@ -100,6 +95,8 @@ bool MenuApp::onEvent(const Event& event)
 
 void MenuApp::setAppPosition(uint32_t appNum, uint32_t position)
 {
+
+    Serial.printf("%d %d \n", appNum, position);
     apps_[position].app = appNum;
 }
 
@@ -135,8 +132,8 @@ void MenuApp::calculateCellRect(uint32_t row, uint32_t column)
 
 void MenuApp::drawDateTimeBlock()
 {
-    auto dt = context_->getRTC()->getDateTime();
-    auto display = context_->getDisplay();
+    auto dt = Kernel::getRTC()->getDateTime();
+    auto display = Kernel::getDisplay();
     calculateCellRect(0);
 
     // Line 1 - Time
@@ -174,20 +171,20 @@ void MenuApp::drawFastAccessBlock()
 
 void MenuApp::drawAppAtCell(uint32_t appNum, uint32_t position)
 {
-    auto display = context_->getDisplay();
-    auto app = appManager_->getApplicationRegistry()->getApplication(appNum);
+    auto display = Kernel::getDisplay();
+    auto app = Kernel::getApplicationFactory()->getById(appNum);
 
     // Calculate CellRectInfo
     calculateCellRect(position);
 
     // Draw Icon
     icon_->clear();
-    app->drawIconTo(icon_);
+    app->drawIcon(icon_);
     display->drawRoundRect(rect_.x + (CELL_SIZE - ICON_SIZE) / 2, rect_.y + MINIMAL_SPACING, ICON_SIZE, ICON_SIZE, 5, 0);
-    context_->getDisplay()->applySpriteToScreen(icon_, rect_.x + (CELL_SIZE - ICON_SIZE) / 2, rect_.y + MINIMAL_SPACING, TFT_WHITE);
+    Kernel::getDisplay()->applySpriteToScreen(icon_, rect_.x + (CELL_SIZE - ICON_SIZE) / 2, rect_.y + MINIMAL_SPACING, TFT_WHITE);
 
     // Draw App name
-    uint32_t text_width = display->getTextWidth(app->getName(), 2);
-    uint32_t text_height = display->getTextHeight(app->getName(), 2);
-    display->drawText(rect_.x + (rect_.width - text_width) / 2, rect_.y + CELL_SIZE - text_height, app->getName(), 0, 2);
+    uint32_t text_width = display->getTextWidth(app->name, 2);
+    uint32_t text_height = display->getTextHeight(app->name, 2);
+    display->drawText(rect_.x + (rect_.width - text_width) / 2, rect_.y + CELL_SIZE - text_height, app->name, 0, 2);
 }

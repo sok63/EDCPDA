@@ -2,12 +2,11 @@
 
 Project for transforming the M5Stack PaperS3 into a PDA for daily use.
 
-## Tech Debt
-
-- Rewrite TouchGesture driver (need support TWOF gestures)
-- Rewrite Shuffler and add console app for PC (to not lost all passwords while lose M5 Paper S3)
-
 ## Changes
+
+### Version 0.0.23
+
+- Switch to Kernel & System concept (prepare for more deep core work)
 
 ### Version 0.0.22
 

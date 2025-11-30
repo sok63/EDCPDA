@@ -2,15 +2,20 @@
 
 #include <M5Unified.h>
 
+#include <pda/core/Kernel.h>
+
 #include <pda/helpers/shuffler/Shuffler.h>
 #include <pda/ui/widgets/Label.h>
 
-PassGenApp::PassGenApp(ApplicationContext* context, ApplicationManager* appManager)
-    : context_(context)
-    , appManager_(appManager)
-    , w_edit_site_({110, 585, 300, 40}, 15)
+AApplication* PassGenApp::createInstance()
+{
+    return new PassGenApp;
+}
+
+PassGenApp::PassGenApp()
+    : w_edit_site_({110, 585, 300, 40}, 15)
     , w_edit_secret_({110, 650, 300, 40}, 15)
-    , w_header_(context, appManager)
+    , w_header_()
     , w_btn_sw_({420, 585, 110, 110}, "SW", 3)
     ,
 
@@ -24,7 +29,7 @@ PassGenApp::PassGenApp(ApplicationContext* context, ApplicationManager* appManag
     , w_btn_chs3_({335, 540, 60, 40}, "S3", 2)
     , w_btn_chs4_({400, 540, 60, 40}, "S4", 2)
     , w_btn_chs5_({465, 540, 60, 40}, "S5", 2)
-    , w_keyboard_(context->getEventService())
+    , w_keyboard_(Kernel::getEventService())
 {
 
     // Special on place case
@@ -55,16 +60,6 @@ PassGenApp::PassGenApp(ApplicationContext* context, ApplicationManager* appManag
     w_btn_chs1_.set_pressed();
 }
 
-void PassGenApp::onStart()
-{
-    context_->getEventService()->addListener(this);
-}
-
-void PassGenApp::onStop()
-{
-    context_->getEventService()->removeListener(this);
-}
-
 void PassGenApp::update(uint32_t deltaTime)
 {
     // Update buttons
@@ -77,7 +72,7 @@ void PassGenApp::update(uint32_t deltaTime)
     // Check others
     for (auto& el : *wm_.renderList()) {
         if (el->take_dirty_flag())
-            context_->getDisplay()->setNeedRedraw();
+            Kernel::getDisplay()->setNeedRedraw();
     }
 }
 
@@ -116,7 +111,7 @@ void PassGenApp::render()
     }
 
     // Now draw result
-    auto display = context_->getDisplay();
+    auto display = Kernel::getDisplay();
 
     // Render widgets
     for (auto& el : *wm_.renderList()) {
@@ -124,14 +119,9 @@ void PassGenApp::render()
     }
 }
 
-const char* PassGenApp::getName() const
+void PassGenApp::drawIcon(ADisplaySpriteHAL* sprite)
 {
-    return "PassGen";
-}
-
-void PassGenApp::drawIconTo(ADisplaySpriteHAL* sprite)
-{
-    auto render = context_->getRender();
+    auto render = Kernel::getRender();
     render->apply_draw_indexed_text(sprite, 15, 32, "!a_8", 0, 2);
 }
 

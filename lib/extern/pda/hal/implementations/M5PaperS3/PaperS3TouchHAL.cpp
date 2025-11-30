@@ -35,6 +35,7 @@ void task_touch(void* arg)
 
 void PaperS3TouchHAL::init()
 {
+    Serial.println("Start touch thread");
     events_q = xQueueCreate(32, sizeof(sTouchInput));
     xTaskCreatePinnedToCore(task_touch, "touch", 4096, nullptr, 3, nullptr, 0);
 }

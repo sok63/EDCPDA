@@ -1,6 +1,5 @@
-#include <pda/applications/ApplicationManager.h>
+
 #include <pda/applications/AApplication.h>
-#include <pda/applications/ApplicationContext.h>
 
 #include <pda/ui/widgets/Header.h>
 
@@ -43,17 +42,12 @@ struct CellAppInfo
 class MenuApp : public AApplication
 {
 public:
-    MenuApp(ApplicationContext* context, ApplicationManager* appManager);
+    static AApplication* createInstance();
+    MenuApp();
     virtual ~MenuApp() = default;
-
-    void onStart() override;
-    void onStop() override;
 
     void update(uint32_t deltaTime) override;
     void render() override;
-
-    const char* getName() const override;
-    void drawIconTo(ADisplaySpriteHAL*) override;
 
     bool onEvent(const Event& event) override;
 
@@ -73,9 +67,6 @@ private:
     void drawAppAtCell(uint32_t appNum, uint32_t position);
 
 private:
-    ApplicationContext* context_;
-    ApplicationManager* appManager_;
-
     CellAppInfo apps_[32];
 
     ADisplaySpriteHAL* icon_;

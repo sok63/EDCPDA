@@ -1,7 +1,6 @@
 #include "Button.h"
 #include "M5Unified.h"
 
-#include <pda/applications/ApplicationContext.h>
 #include <pda/core/TouchPrimitives.h>
 
 Button::Button(sRect size, std::string text, uint32_t text_size)

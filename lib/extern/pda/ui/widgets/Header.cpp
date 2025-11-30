@@ -1,13 +1,12 @@
 #include "Header.h"
 
+#include <pda/core/Kernel.h>
+
 #include <M5Unified.h>
 #include <pda/helpers/touch/TouchGestureDriver.h>
 
-
-Header::Header(ApplicationContext* context, ApplicationManager* appManager)
+Header::Header()
     : AWidget({0, 0, 540, HEADER_SIZE})
-    , context_(context)
-    , app_manager_(appManager)
 {
 }
 
@@ -20,12 +19,12 @@ void Header::update()
 void Header::render(ADisplaySpriteHAL* to)
 {
     // Clean area
-    to->drawFillRect(size_.x, size_.y, size_.x+size_.w, size_.y+size_.h, TFT_WHITE);
+    to->drawFillRect(size_.x, size_.y, size_.x + size_.w, size_.y + size_.h, TFT_WHITE);
 
     char buf[15];
 
     // Draw time
-    auto dt = context_->getRTC()->getDateTime();
+    auto dt = Kernel::getRTC()->getDateTime();
     sprintf(buf, "%02d:%02d", dt.hour, dt.minute);
     uint32_t text_width = to->getTextWidth(buf, 2);
     to->drawText(270 - (text_width) / 2, 6, buf, 0, 2);
@@ -35,7 +34,7 @@ void Header::render(ADisplaySpriteHAL* to)
     to->drawText(350, 6, buf, 0, 2);
 
     // Draw Battery info
-    sprintf(buf, "[%02d]", context_->getPower()->getBatteryLevel());
+    sprintf(buf, "[%02d]", Kernel::getPower()->getBatteryLevel());
     to->drawText(470, 6, buf, 0, 2);
 
     // Draw bottom line
@@ -57,7 +56,7 @@ bool Header::feed_event(const Event& event)
         return false;
 
     if (check_hit(size_, touch->startX, touch->startY)) {
-        app_manager_->exitCurrentApp();
+        Kernel::exitApplication();
         return true;
     }
 

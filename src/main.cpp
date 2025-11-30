@@ -1,63 +1,68 @@
 #include <Arduino.h>
 
-#include <pda/hal/implementations/M5PaperS3/PaperS3.h>
-
-#include "apps/calendar/CalendarApp.h"
-#include "apps/device/DeviceApp.h"
-#include "apps/gallery/GalleryApp.h"
 #include "apps/maps/MapsApp.h"
 #include "apps/menu/MenuApp.h"
 #include "apps/passgen/PassGenApp.h"
-#include "apps/reader/ReaderApp.h"
-#include "apps/safepass/SafePassApp.h"
-#include "apps/weather/WeatherApp.h"
 
-PaperS3 pda;
+#include <pda/core/Kernel.h>
+#include <pda/core/PDA.h>
+
+#include <pda/hal/implementations/FastEPD/FastEPDDisplayHAL.h>
+
+#include <pda/hal/implementations/M5PaperS3/PaperS3DisplayHAL.h>
+#include <pda/hal/implementations/M5PaperS3/PaperS3DisplaySpriteHAL.h>
+#include <pda/hal/implementations/M5PaperS3/PaperS3LVRenderHAL.h>
+#include <pda/hal/implementations/M5PaperS3/PaperS3PowerHAL.h>
+#include <pda/hal/implementations/M5PaperS3/PaperS3RTCHAL.h>
+#include <pda/hal/implementations/M5PaperS3/PaperS3StorageHAL.h>
+#include <pda/hal/implementations/M5PaperS3/PaperS3TouchHAL.h>
+
+static AppDescriptor g_apps[] = {
+    {0, "Menu", &MenuApp::createInstance, nullptr},
+    {1, "Maps", &MapsApp::createInstance, &MapsApp::drawIcon},
+    {2, "PassGen", &PassGenApp::createInstance, &PassGenApp::drawIcon},
+
+};
+
+static AppFactory g_appFactory(g_apps, sizeof(g_apps) / sizeof(g_apps[0]));
+
+static PDA* pda;
 
 void setup()
 {
+    auto cfg = M5.config();
+    cfg.clear_display = false;
+    M5.begin(cfg);
 
     Serial.begin(115200);
-    Serial.println("M5 Paper S3 Touch Gesture Demo");
+    sleep(3);
 
-    pda.init();
+    // Fill Kernel with implemenatations
+    auto kernel = Kernel::getInstance();
 
-    // Start adding apps to our pda
-    auto menu = new MenuApp(pda.getApplicationContext(), pda.getApplicationManager());
-    pda.registerApplication(menu); // At first debug menu
+    Kernel::setApplicationFactory(&g_appFactory);
 
-    // First apps line
-    pda.registerApplication(new MapsApp(pda.getApplicationContext(), pda.getApplicationManager()));
-    menu->setAppPosition(1, 2);
+    Kernel::setDisplay(new PaperS3DisplayHAL());
+    Kernel::setRender(new PaperS3LVRenderHAL);
+    Kernel::setTouch(new PaperS3TouchHAL());
+    Kernel::setStorage(new PaperS3StorageHAL());
+    Kernel::setRTC(new PaperS3RTCHAL());
+    Kernel::setPower(new PaperS3PowerHAL());
+    Kernel::setEventService(new EventService());
 
-    pda.registerApplication(new ReaderApp(pda.getApplicationContext(), pda.getApplicationManager()));
-    menu->setAppPosition(2, 3);
+    Kernel::getDisplay()->init();
+    Kernel::getTouch()->init();
+    Kernel::getStorage()->init();
+    Kernel::getRTC()->init();
+    Kernel::getPower()->init();
 
-    // Second apps line
-    pda.registerApplication(new GalleryApp(pda.getApplicationContext(), pda.getApplicationManager()));
-    menu->setAppPosition(3, 4);
+    pda = new PDA;
 
-    pda.registerApplication(new WeatherApp(pda.getApplicationContext(), pda.getApplicationManager()));
-    menu->setAppPosition(4, 5);
+    Kernel::setApplication(0);
 
-    pda.registerApplication(new DeviceApp(pda.getApplicationContext(), pda.getApplicationManager()));
-    menu->setAppPosition(5, 6);
-
-    pda.registerApplication(new CalendarApp(pda.getApplicationContext(), pda.getApplicationManager()));
-    menu->setAppPosition(6, 7);
-
-    // Third apps line
-    pda.registerApplication(new SafePassApp(pda.getApplicationContext(), pda.getApplicationManager()));
-    menu->setAppPosition(7, 8);
-
-    pda.registerApplication(new PassGenApp(pda.getApplicationContext(), pda.getApplicationManager()));
-    menu->setAppPosition(8, 9);
-
-    // Lets correct set app
-    pda.getApplicationManager()->launchApp(0);
 }
 
 void loop()
 {
-    pda.update();
+    pda->run_cycle();
 }

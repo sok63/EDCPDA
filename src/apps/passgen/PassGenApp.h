@@ -3,9 +3,7 @@
 #include <string>
 #include <vector>
 
-#include <pda/applications/ApplicationManager.h>
 #include <pda/applications/AApplication.h>
-#include <pda/applications/ApplicationContext.h>
 
 #include <pda/ui/widgets/Button.h>
 #include <pda/ui/widgets/CharMatrix.h>
@@ -18,24 +16,18 @@
 class PassGenApp : public AApplication
 {
 public:
-    PassGenApp(ApplicationContext* context, ApplicationManager* appManager);
+    static AApplication* createInstance();
+    PassGenApp();
     virtual ~PassGenApp() = default;
-
-    void onStart() override;
-    void onStop() override;
 
     void update(uint32_t deltaTime) override;
     void render() override;
 
-    const char* getName() const override;
-    void drawIconTo(ADisplaySpriteHAL*) override;
+    static void drawIcon(ADisplaySpriteHAL*);
 
     bool onEvent(const Event& event) override;
 
 private:
-    ApplicationContext* context_;
-    ApplicationManager* appManager_;
-
     WidgetAppManager wm_;
 
     Header w_header_;
