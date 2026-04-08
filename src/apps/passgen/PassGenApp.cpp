@@ -80,6 +80,7 @@ void PassGenApp::update(uint32_t deltaTime)
 
     // Check others
     for (auto& el : *wm_.renderList()) {
+        el->update();
         if (el->take_dirty_flag())
             context_->getDisplay()->setNeedRedraw();
     }
