@@ -10,7 +10,7 @@ static std::vector<Key> row_2 = {
     {"A", 1}, {"S", 1}, {"D", 1}, {"F", 1}, {"G", 1}, {"H", 1}, {"J", 1}, {"K", 1.f}, {"L", 1.f}, {":", 1.f}};
 
 static std::vector<Key> row_3 = {
-    {" ", 1.f}, {"Z", 1}, {"X", 1}, {"C", 1}, {"V", 1}, {"B", 1}, {"N", 1}, {"M", 1}, {".", 1.f}, {"/", 1.f}};
+    {"←", 1.f}, {"Z", 1}, {"X", 1}, {"C", 1}, {"V", 1}, {"B", 1}, {"N", 1}, {"M", 1}, {".", 1.f}, {"/", 1.f}};
 
 static std::vector<std::vector<Key>> key_rows = {
     row_1,
@@ -64,7 +64,12 @@ bool Keyboard::feed_event(const Event& event)
             if (!check_hit(key_rect_info_, touch->startX, touch->startY))
                 continue;
 
-            ch_ = key_rows[ridx][idx].label[0];
+            // Handle backspace key
+            if (key_rows[ridx][idx].label == "←") {
+                ch_ = '\b';
+            } else {
+                ch_ = key_rows[ridx][idx].label[0];
+            }
             post_event();
             if (touch->gesture == eGestureType::ONEF_DOUBLE_TAP)
                 post_event(); // For double tap double post event

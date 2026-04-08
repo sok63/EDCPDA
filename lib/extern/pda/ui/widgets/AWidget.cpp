@@ -7,7 +7,8 @@ AWidget::AWidget(sRect size)
 
 bool AWidget::take_dirty_flag()
 {
-    auto result = dirty_;
+    // Atomically take the flag
+    bool result = dirty_;
     dirty_ = false;
     return result;
 }

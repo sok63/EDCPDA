@@ -10,6 +10,7 @@ class Edit : public AWidget
 {
 public:
     Edit(sRect size, uint32_t text_size_limit);
+    ~Edit() override;
 
     void update() override;
     void render(ADisplaySpriteHAL* sprite) override;
@@ -19,9 +20,9 @@ public:
     void set_selection(bool);
     char* get_text_();
 
-protected:
-    bool selected_ = false;
+private:
     uint32_t text_size_limit_;
-    uint32_t text_pos_ = 0;
     char* text_;
+    uint32_t text_pos_;
+    bool selected_;
 };

@@ -70,8 +70,12 @@ void PassGenApp::update(uint32_t deltaTime)
     // Update buttons
     if (w_btn_sw_.is_pressed()) {
         is_secret_selected = !is_secret_selected;
+        // Ensure only one Edit has selection at a time
         w_edit_secret_.set_selection(is_secret_selected);
         w_edit_site_.set_selection(!is_secret_selected);
+        // Force immediate redraw of both Edit widgets
+        w_edit_secret_.set_dirty_flag();
+        w_edit_site_.set_dirty_flag();
     }
 
     // Check others
