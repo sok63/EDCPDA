@@ -26,4 +26,7 @@ private:
     ApplicationContext* context_;
     ApplicationManager* appManager_;
     Header w_header_;
+
+    int view_month_;
+    int view_year_;
 };
